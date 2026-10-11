@@ -61,7 +61,7 @@ async function main() {
   });
 
   try {
-    await page.goto(url, { waitUntil: 'networkidle' });
+    await page.goto(`${url}create`, { waitUntil: 'networkidle' });
     await page.waitForSelector('#root > *', { timeout: 10000 });
 
     const expectText = async (text) => {
@@ -72,6 +72,11 @@ async function main() {
       await page.getByRole('button', { name: new RegExp(`^${escaped}`) }).first().click();
       await page.waitForTimeout(250);
     };
+
+    // Direct nested route loading must be served by the SPA fallback.
+    await expectText('Start with the person, not a template.');
+    await clickText('Discover');
+    await expectText('Make a little magic for someone you love.');
 
     // Phase 1A creator-to-recipient navigation on a mobile viewport.
     await page.evaluate(() => window.localStorage.clear());
@@ -88,6 +93,8 @@ async function main() {
     await clickText('Preview recipient view');
     await expectText('A little world, made for Ari.');
     await expectText('Development preview · not published · no secure recipient token issued.');
+    await page.reload({ waitUntil: 'networkidle' });
+    await expectText('A little world, made for Ari.');
     await clickText('Back to discovery');
     await expectText('Make a little magic for someone you love.');
     await clickText('Admin');
