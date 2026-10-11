@@ -2,7 +2,7 @@
 
 This is the authoritative delivery status for the repository. Feature lists in older documents describe product intent or historical work; they are not release-readiness evidence.
 
-Last verified: 2026-10-11 on merged `main@f8e71af9ca244850a5f99cfa021888cb734f3fc4` and open PR [#3](https://github.com/isudally/playkin/pull/3) at `phase1a/web-foundation`, with the active `Protect main - CI required` ruleset. The architecture correction is implemented locally and remains unmerged.
+Last verified: 2026-10-11 on merged `main@f8e71af9ca244850a5f99cfa021888cb734f3fc4` and open PR [#3](https://github.com/isudally/playkin/pull/3) at correction commit `72ab3d0` on `phase1a/web-foundation`, with the active `Protect main - CI required` ruleset. Phase 1A remains unmerged.
 
 ## Current status
 
@@ -31,14 +31,14 @@ Last verified: 2026-10-11 on merged `main@f8e71af9ca244850a5f99cfa021888cb734f3f
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Independent web runtime | VERIFIED LOCALLY / PENDING CI | Vite entrypoint in `web/` uses browser-native React DOM components and CSS. The web build imports neither the Expo app nor React Native runtime. |
-| Web route shell | VERIFIED LOCALLY / PENDING CI | Local Chromium smoke test completed discovery, creator, recipient, admin, local draft persistence, direct SPA fallback serving, and the 390x844 mobile viewport without page or console errors. |
-| Shared domain model | VERIFIED LOCALLY / PENDING CI | `web/domain/playkin-domain.ts` defines the draft and future integration interfaces without implementing server services. |
-| GameModule contract | VERIFIED LOCALLY / PENDING CI | `web/domain/game-module.ts` defines manifest, personalization, theme/assets, difficulty, lifecycle, structured events, subscriptions, and teardown. |
-| Design foundation | VERIFIED LOCALLY / PENDING CI | Browser-native CSS preserves the Playkin dark seasonal direction, responsive layouts, accessible focus states, and temporary artwork note. |
+| Independent web runtime | VERIFIED WORKING | GitHub CI run `38157149953` built the Vite entrypoint in `web/` using browser-native React DOM components and CSS; the web build imports neither the Expo app nor React Native runtime. |
+| Web route shell | VERIFIED WORKING | GitHub Chromium smoke test completed discovery, creator, recipient, admin, local draft persistence, direct SPA fallback serving, and the 390x844 mobile viewport without page or console errors. |
+| Shared domain model | VERIFIED WORKING | `web/domain/playkin-domain.ts` defines the draft and future integration interfaces without implementing server services; independent web type-check passed in CI. |
+| GameModule contract | VERIFIED WORKING | `web/domain/game-module.ts` defines manifest, personalization, theme/assets, difficulty, lifecycle, structured events, subscriptions, and teardown; independent web type-check passed in CI. |
+| Design foundation | VERIFIED WORKING | Browser-native CSS preserves the Playkin dark seasonal direction, responsive layouts, accessible focus states, and temporary artwork note; build and browser checks passed in CI. |
 | Native migration safety | VERIFIED WORKING | `App.tsx` is restored to the legacy Expo/React Native application; the independent Vite runtime is started and built separately. |
-| Production web export | VERIFIED LOCALLY / PENDING CI | `npm run build:web` produced a Vite export under Node 24; CI remains authoritative under the pinned Node 18.18.0 toolchain. |
-| Initial JavaScript bundle | VERIFIED LOCALLY / PENDING CI | `verify:web-bundle` measured 152,682 raw JavaScript bytes (49.32 kB gzip reported by Vite), below the 300,000-byte budget, with no legacy runtime references. |
+| Production web export | VERIFIED WORKING | CI run `38157149953` produced the Vite export under the pinned Node 18.18.0 toolchain. |
+| Initial JavaScript bundle | VERIFIED WORKING | CI measured 152,682 raw JavaScript bytes (49.32 kB gzip reported by Vite), below the 300,000-byte budget, with no legacy runtime references. |
 | Phase 1B services | NOT IMPLEMENTED | Persistence, secure recipient links, server AI, payments, uploads, and analytics are interfaces only. |
 
 ## Phase 0 acceptance gates
@@ -69,10 +69,12 @@ Last verified: 2026-10-11 on merged `main@f8e71af9ca244850a5f99cfa021888cb734f3f
 
 ## Phase 1A verification record
 
-- PR: [#3](https://github.com/isudally/playkin/pull/3), base `main`, head `phase1a/web-foundation`. The architecture correction is pending push and CI; no merge has occurred.
+- PR: [#3](https://github.com/isudally/playkin/pull/3), base `main`, head `phase1a/web-foundation`, correction commit `72ab3d0`. No merge has occurred.
 - Independent runtime: `web/index.html`, `web/main.tsx`, `web/App.tsx`, `web/styles.css`, `web/vite.config.ts`, and `web/tsconfig.json`. The Vite build has no import path to `App.tsx`, `src/navigation`, React Native, Expo, or legacy engines.
 - Local verification: 10 Jest suites and 90 tests passed; `verify:types` passed against the existing 63-diagnostic legacy baseline; `verify:types:web` passed with zero diagnostics; ESLint passed with 0 errors and 228 legacy warnings.
 - Web export: Vite 5.4.19 produced `web-build` with one 152,682-byte JavaScript file and 5.91 kB CSS; the independent bundle guard and client secret scanner passed.
 - Browser evidence: Chromium passed against the fresh export at 390x844, covering direct route serving, discovery, creator fields, local draft persistence, recipient development preview, return to discovery, and admin boundary without page or console errors.
-- CI status: pending for the correction commit. The existing PR #3 checks remain valid for the prior Expo-based implementation but are not acceptance evidence for this corrected architecture.
-- Status: HOLD until the correction is pushed and GitHub CI independently verifies it. Phase 1B services remain not implemented.
+- CI: [run `38157149953`](https://github.com/isudally/playkin/actions/runs/38157149953), required job `lint-and-test`, successful in 3m 57s. It completed `npm ci`, legacy and independent web type checks, lint, 90 tests, Vite export, bundle guard, secret scan, Chromium installation, and browser boot.
+- Deployment workflow: [run `38157149810`](https://github.com/isudally/playkin/actions/runs/38157149810), successful in 3m 5s. Production and preview deployment steps were not authorized or configured; no deployment occurred.
+- Negative control: a temporary `react-native` reference in `web-build` caused `verify:web-bundle` to fail; the fixture was removed and the clean bundle guard passed again.
+- Status: READY TO MERGE after the final documentation commit's required checks pass. Phase 1B services remain not implemented.
