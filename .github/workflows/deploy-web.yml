@@ -7,6 +7,13 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      deploy_production:
+        description: Explicitly authorize a production Vercel deployment
+        required: true
+        default: false
+        type: boolean
 
 jobs:
   deploy:
@@ -37,7 +44,8 @@ jobs:
           NODE_OPTIONS: '--max-old-space-size=4096'
 
       - name: Deploy to Vercel (Production)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        # Production deployment is manually authorized during the migration.
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy_production == true
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}

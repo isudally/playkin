@@ -19,6 +19,7 @@ Last verified: 2026-10-11 on PR #2 (`phase0/foundation` at `5c7d5c4`), based on 
 | Web export | VERIFIED WORKING | GitHub Actions CI completed `npm run build:web` in 41 seconds under the pinned Node 18.18.0 environment. |
 | Browser boot | VERIFIED WORKING | GitHub Actions CI installed Chromium and completed the fresh-export browser smoke test, including first-time onboarding, returning-user bypass, and nested Templates navigation. |
 | Client AI credentials | RETIRED | The client no longer reads provider keys, embeds provider endpoints, or calls provider APIs; generation uses the existing local fallback until Phase 1 server work. |
+| Server-side AI replacement | DEFERRED | Phase 1 must replace the retired client-side provider path with a server-side AI boundary, server-only credentials, and an explicit product/API contract. |
 | Client bundle secret scan | VERIFIED WORKING | GitHub Actions scanned the same fresh `web-build` produced by CI; the scanner passed. The deliberate provider-key fixture failed the scanner locally and was removed. |
 | Payment | NOT IMPLEMENTED | No payment provider or entitlement backend is in this Phase 0 scope. |
 | Server persistence / recipient links | NOT IMPLEMENTED | Reserved for the Phase 1 vertical slice. |
@@ -47,7 +48,7 @@ Last verified: 2026-10-11 on PR #2 (`phase0/foundation` at `5c7d5c4`), based on 
 
 1. Establish the web-first shell and route model without importing the legacy navigator.
 2. Extract shared domain models, theme tokens, and the `GameModule` contract.
-3. Add a small server boundary for gift drafts, generated content, and server-only provider credentials.
+3. Replace the retired client-side AI path with a small server boundary for gift drafts, generated content, and server-only provider credentials.
 4. Persist a gift, issue an opaque expiring recipient token, and render the recipient route without login.
 5. Ship one complete creator-to-recipient game module with completion tracking.
 6. Add premium visual assets, responsive states, accessibility, performance budgets, and mobile-browser acceptance tests from the first vertical slice.
