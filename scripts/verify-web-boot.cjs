@@ -68,7 +68,8 @@ async function main() {
       await page.getByText(text, { exact: true }).first().waitFor({ state: 'visible', timeout: 10000 });
     };
     const clickText = async (text) => {
-      await page.getByText(text, { exact: true }).first().click();
+      const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      await page.getByRole('button', { name: new RegExp(`^${escaped}`) }).first().click();
       await page.waitForTimeout(250);
     };
 

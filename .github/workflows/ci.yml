@@ -38,10 +38,16 @@ jobs:
       - name: Check TypeScript
         run: npm run verify:types
 
+      - name: Check independent web TypeScript
+        run: npm run verify:types:web
+
       - name: Build web app
         run: npm run build:web
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
+
+      - name: Measure web bundle and reject legacy runtime imports
+        run: npm run verify:web-bundle
 
       - name: Scan client bundle for secrets
         run: npm run verify:client-bundle

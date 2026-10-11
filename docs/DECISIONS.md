@@ -14,13 +14,14 @@ Each game experience will implement a small host-controlled contract:
 
 ```ts
 interface GameModule {
-  load(input: GameModuleInput): Promise<void>;
+  mount(context: GameModuleContext): Promise<void> | void;
   start(): void;
   pause(): void;
   resume(): void;
   complete(): void;
   abandon(): void;
-  destroy(): void;
+  teardown(): void;
+  subscribe(listener: (event: GameModuleEvent) => void): () => void;
 }
 ```
 
@@ -32,6 +33,6 @@ Start with DOM/React modules for the first story, quiz, or memory experience. Ad
 
 ## Phase 1A web foundation
 
-The web migration is incremental: `App.tsx` selects the new web shell only for the web platform, while the existing Expo/React Native navigator remains available on native targets as migration reference and rollback surface. The Phase 1A shell owns route navigation and local development preview state; it does not claim to publish gifts, issue recipient links, process payments, or generate AI content.
+The corrected Phase 1A runtime is an independent Vite React/TypeScript application under `web/`. It uses browser-native DOM elements and CSS, owns route navigation and local development preview state, and builds to `web-build` without importing the Expo/React Native app or legacy engines. The existing Expo/React Native application remains intact in `App.tsx` and `src/` as migration reference and rollback surface. The web runtime does not claim to publish gifts, issue recipient links, process payments, or generate AI content.
 
-Existing concepts deliberately reused or adapted: seasonal theme tokens from `src/design-tokens/theme.ts`, the Dodo companion identity as clearly temporary development artwork, the gift questionnaire concept and personalisation vocabulary from `src/types/giftforge.ts`, and the existing creator/recipient product direction. Native screens and provider integrations were not copied into the web bundle.
+Existing concepts deliberately reused or adapted: the seasonal Playkin colour direction, the Dodo companion identity as clearly temporary development artwork, the gift questionnaire concept and personalisation vocabulary from `src/types/giftforge.ts`, and the existing creator/recipient product direction. The new web theme and domain contracts are self-contained so the browser bundle does not inherit React Native, Expo, navigation, or legacy engine dependencies.
