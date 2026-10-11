@@ -2,7 +2,7 @@
 
 This is the authoritative delivery status for the repository. Feature lists in older documents describe product intent or historical work; they are not release-readiness evidence.
 
-Last verified: 2026-10-11 on `phase1b/first-complete-gift` for open [PR #4](https://github.com/isudally/playkin/pull/4), based on merged `main@fdd1c53b50d649e6d1d78783b24f0d2e2f1c3738`, with the active `Protect main - CI required` ruleset. Production deployment remains deferred.
+Last verified: 2026-10-11 on `phase1b/first-complete-gift@bd507523f81380f1eaad674e67a17ea3f8d6e22d` for open [PR #4](https://github.com/isudally/playkin/pull/4), based on merged `main@fdd1c53b50d649e6d1d78783b24f0d2e2f1c3738`, with the active `Protect main - CI required` ruleset. Production deployment remains deferred.
 
 ## Current status
 
@@ -54,7 +54,7 @@ Last verified: 2026-10-11 on `phase1b/first-complete-gift` for open [PR #4](http
 | Privacy and abuse boundaries | PARTIAL | Creator-token authorization, recipient-token isolation, deletion, input limits, bounded body parsing, expiry, retention, and socket-based bounded rate limiting are present. Identity, moderation, audit retention, and production database controls remain follow-up work. |
 | Gameplay product accuracy | PARTIAL | The three-round Memory Trail is a substantive vertical-slice contract demonstration, not a commercially premium catalogue experience. The full sender message is now revealed only after completion; richer game design and final artwork remain follow-up work. |
 | Phase 1B browser evidence | VERIFIED WORKING | Chromium at 390x844 proved creator save, secure-link generation, separate browser delivery, all three game rounds, persisted completion after reload, creator status refresh showing opened/completed, creator deletion, deleted-link handling, and no unexpected browser errors. |
-| Phase 1B release state | PENDING CI | Local correction checks pass; PR #4 remains open and must receive the correction commit and fresh GitHub verification before merge-readiness can be claimed. |
+| Phase 1B release state | READY TO MERGE | Targeted correction commit `bd507523f81380f1eaad674e67a17ea3f8d6e22d` is on PR #4; fresh GitHub CI and deployment-safety checks passed. This is not a production-readiness claim. |
 
 ## Phase 0 acceptance gates
 
@@ -116,5 +116,6 @@ Last verified: 2026-10-11 on `phase1b/first-complete-gift` for open [PR #4](http
 - Bundle scanner: generic bearer-header matching was removed because it rejected legitimate creator authorization; provider key names, provider URLs, payment server keys, and provider-style secret tokens remain blocked.
 - Local evidence: web type check, production Vite build, web bundle guard, client bundle scan, six server tests, and the 390x844 Chromium journey passed. The journey included separate-browser delivery, completion reload, status refresh, creator deletion, and deleted-link handling.
 - Web export: Vite 5.4.19 produced one 162,037-byte JavaScript file; the independent bundle budget and client secret scan passed on that same fresh export.
+- GitHub verification after correction: CI run [`38161783569`](https://github.com/isudally/playkin/actions/runs/38161783569), job `114536043941`, passed in 1m45s; deployment-safety run [`38161783571`](https://github.com/isudally/playkin/actions/runs/38161783571), job `114536043970`, passed in 33s with no production deployment.
 - Negative control: a temporary `EXPO_PUBLIC_OPENAI_API_KEY` fixture caused the client-bundle scan to fail, then was removed. The clean scan passed again.
 - Product boundary: Memory Trail remains a small vertical slice rather than a commercially premium catalogue experience; the full message is revealed only after completion. Final artwork and richer game design remain deferred.
