@@ -2,6 +2,7 @@
  * GameForge Design Tokens
  * A unified design system for the forge aesthetic
  */
+import { Platform } from 'react-native';
 
 // Base unit: 4px
 const BASE_UNIT = 4;
@@ -18,6 +19,22 @@ export const spacing = {
 } as const;
 
 export const typography = {
+  // Font families — platform system stacks.
+  // 25 call sites across EmojiPicker, RouletteWheel, StyleCarousel,
+  // GiftCreationScreen and BrandingStudioScreen read typography.fontFamily.*
+  fontFamily: Platform.select({
+    ios: { regular: 'System', medium: 'System', bold: 'System' },
+    android: {
+      regular: 'sans-serif',
+      medium: 'sans-serif-medium',
+      bold: 'sans-serif',
+    },
+    default: {
+      regular: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      medium: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      bold: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+    },
+  }) as { regular: string; medium: string; bold: string },
   // Font sizes
   size: {
     xs: 11,
