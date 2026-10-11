@@ -2,7 +2,7 @@
 
 This is the authoritative delivery status for the repository. Feature lists in older documents describe product intent or historical work; they are not release-readiness evidence.
 
-Last verified: 2026-10-11 on merged `main@f8e71af9ca244850a5f99cfa021888cb734f3fc4` and open PR [#3](https://github.com/isudally/playkin/pull/3) at correction commit `72ab3d0` on `phase1a/web-foundation`, with the active `Protect main - CI required` ruleset. Phase 1A remains unmerged.
+Last verified: 2026-10-11 on merged `main@f8e71af9ca244850a5f99cfa021888cb734f3fc4` and open PR [#3](https://github.com/isudally/playkin/pull/3) at final evidence commit `fba0b91` on `phase1a/web-foundation`, with the active `Protect main - CI required` ruleset. Phase 1A remains unmerged.
 
 ## Current status
 
@@ -69,12 +69,12 @@ Last verified: 2026-10-11 on merged `main@f8e71af9ca244850a5f99cfa021888cb734f3f
 
 ## Phase 1A verification record
 
-- PR: [#3](https://github.com/isudally/playkin/pull/3), base `main`, head `phase1a/web-foundation`, correction commit `72ab3d0`. No merge has occurred.
+- PR: [#3](https://github.com/isudally/playkin/pull/3), base `main`, head `phase1a/web-foundation`, final evidence commit `fba0b91`. No merge has occurred.
 - Independent runtime: `web/index.html`, `web/main.tsx`, `web/App.tsx`, `web/styles.css`, `web/vite.config.ts`, and `web/tsconfig.json`. The Vite build has no import path to `App.tsx`, `src/navigation`, React Native, Expo, or legacy engines.
 - Local verification: 10 Jest suites and 90 tests passed; `verify:types` passed against the existing 63-diagnostic legacy baseline; `verify:types:web` passed with zero diagnostics; ESLint passed with 0 errors and 228 legacy warnings.
 - Web export: Vite 5.4.19 produced `web-build` with one 152,682-byte JavaScript file and 5.91 kB CSS; the independent bundle guard and client secret scanner passed.
 - Browser evidence: Chromium passed against the fresh export at 390x844, opening `/create` directly through the SPA fallback, navigating discovery and creator fields, saving localStorage state, reloading `/recipient/local-preview` to verify persistence, returning to discovery, and visiting the admin boundary without page or console errors.
-- CI: [run `38157149953`](https://github.com/isudally/playkin/actions/runs/38157149953), required job `lint-and-test`, successful in 3m 57s. It completed `npm ci`, legacy and independent web type checks, lint, 90 tests, Vite export, bundle guard, secret scan, Chromium installation, and browser boot.
-- Deployment workflow: [run `38157149810`](https://github.com/isudally/playkin/actions/runs/38157149810), successful in 3m 5s. Production and preview deployment steps were not authorized or configured; no deployment occurred.
+- CI: [run `38157834134`](https://github.com/isudally/playkin/actions/runs/38157834134), required job `lint-and-test`, successful. It completed `npm ci`, legacy and independent web type checks, lint, 90 tests, Vite export, bundle guard, secret scan, Chromium installation, and the strengthened direct-route/persistence browser boot.
+- Deployment workflow: [run `38157834177`](https://github.com/isudally/playkin/actions/runs/38157834177), successful. Production and preview deployment steps were not authorized or configured; no deployment occurred.
 - Negative control: a temporary `react-native` reference in `web-build` caused `verify:web-bundle` to fail; the fixture was removed and the clean bundle guard passed again.
 - Status: READY TO MERGE after the final documentation commit's required checks pass. Phase 1B services remain not implemented.
