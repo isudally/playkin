@@ -128,19 +128,26 @@ async function main() {
     await recipientPage.getByRole('button', { name: 'Begin the trail' }).click();
     await recipientPage.getByRole('button', { name: 'Birthday' }).click();
     await recipientPage.getByRole('button', { name: 'Ismael' }).click();
-    await recipientPage.getByRole('button', { name: 'A small world made just for you.' }).click();
+    await recipientPage.getByRole('button', { name: 'A little piece of this moment' }).click();
     await recipientPage.getByText('JOURNEY COMPLETE', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
     await recipientPage.reload({ waitUntil: 'networkidle' });
     await recipientPage.getByText('JOURNEY COMPLETE', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
     await recipientContext.close();
     if (recipientFailures.length > 0) throw new Error(`Recipient browser reported errors:\n${recipientFailures.join('\n')}`);
 
+    await page.getByRole('button', { name: 'Refresh status' }).click();
+    await page.getByText('Opened', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await page.getByText('Completed', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await page.getByRole('button', { name: 'Delete gift' }).click();
+    await page.getByRole('button', { name: 'Confirm delete' }).click();
+    await expectText('The gift and its recipient link are deleted.');
+
     expectingInvalidLink = true;
-    await page.goto(`${url}gift/not-a-real-token`, { waitUntil: 'networkidle' });
+    await page.goto(recipientUrl, { waitUntil: 'networkidle' });
     await page.getByText('This gift could not be opened.', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
-    // The 404 is the expected product response for an invalid link, not a browser failure.
+    // The 404 is the expected product response for a deleted link, not a browser failure.
     for (let index = failures.length - 1; index >= 0; index -= 1) {
-      if (failures[index].includes('not-a-real-token')) failures.splice(index, 1);
+      if (failures[index].includes('/gift/') || failures[index].includes('/api/recipient/')) failures.splice(index, 1);
     }
     expectingInvalidLink = false;
     await clickText('Admin');

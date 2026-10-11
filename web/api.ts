@@ -14,6 +14,7 @@ export interface GiftView extends GiftInput {
   expiresAt: string;
   status: 'draft' | 'published' | 'completed';
   progress: number;
+  openedAt?: string | null;
   completion: { score: number; completedAt: string } | null;
 }
 
@@ -38,9 +39,15 @@ export function createGift(input: GiftInput): Promise<{ gift: GiftView; creatorT
 }
 
 export function publishGift(id: string, creatorToken: string): Promise<PublishedGift> {
-  const authorizationHeader = ['Author', 'ization'].join('');
-  const bearerPrefix = ['Bear', 'er '].join('');
-  return request(`/gifts/${encodeURIComponent(id)}/publish`, { method: 'POST', headers: { [authorizationHeader]: `${bearerPrefix}${creatorToken}` } });
+  return request(`/gifts/${encodeURIComponent(id)}/publish`, { method: 'POST', headers: { Authorization: `Bearer ${creatorToken}` } });
+}
+
+export function getCreatorGift(id: string, creatorToken: string): Promise<{ gift: GiftView }> {
+  return request(`/gifts/${encodeURIComponent(id)}`, { headers: { Authorization: `Bearer ${creatorToken}` } });
+}
+
+export function deleteGift(id: string, creatorToken: string): Promise<{ deleted: boolean }> {
+  return request(`/gifts/${encodeURIComponent(id)}`, { method: 'DELETE', headers: { Authorization: `Bearer ${creatorToken}` } });
 }
 
 export function getRecipientGift(token: string): Promise<{ gift: GiftView }> {

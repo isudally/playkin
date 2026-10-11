@@ -5,6 +5,7 @@ const path = require('node:path');
 const OCCASIONS = new Set(['birthday', 'anniversary', 'thank-you', 'just-because']);
 const THEMES = new Set(['golden-reunion', 'eternal-romance', 'creator-wave']);
 const DEFAULT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const DEFAULT_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 
 function token() {
   return crypto.randomBytes(32).toString('base64url');
@@ -37,9 +38,10 @@ function validateGift(input) {
 }
 
 class GiftStore {
-  constructor(filePath, ttlMs = DEFAULT_TTL_MS) {
+  constructor(filePath, ttlMs = DEFAULT_TTL_MS, retentionMs = DEFAULT_RETENTION_MS) {
     this.filePath = filePath;
     this.ttlMs = ttlMs;
+    this.retentionMs = retentionMs;
     this.ensureDirectory();
   }
 
@@ -51,10 +53,47 @@ class GiftStore {
   read() {
     try {
       const parsed = JSON.parse(fs.readFileSync(this.filePath, 'utf8'));
-      return parsed && parsed.gifts ? parsed : { gifts: {} };
-    } catch {
-      return { gifts: {} };
+      if (!parsed || typeof parsed !== 'object' || !parsed.gifts || typeof parsed.gifts !== 'object' || Array.isArray(parsed.gifts)) {
+        throw new Error('Gift storage has an invalid shape.');
+      }
+      return parsed;
+    } catch (error) {
+      if (error.code === 'ENOENT') return { gifts: {} };
+      if (error instanceof SyntaxError || error.message.startsWith('Gift storage has an invalid shape')) {
+        const corruption = new Error('Gift storage is corrupted and must be restored before writes continue.');
+        corruption.code = 'STORE_CORRUPT';
+        throw corruption;
+      }
+      throw error;
     }
+  }
+
+  purgeExpired(now = Date.now()) {
+    const data = this.read();
+    let removed = 0;
+    for (const [id, gift] of Object.entries(data.gifts)) {
+      const expiry = Date.parse(gift.recipientTokenExpiresAt || gift.expiresAt);
+      if (Number.isFinite(expiry) && now - expiry > this.retentionMs) {
+        delete data.gifts[id];
+        removed += 1;
+      }
+    }
+    if (removed > 0) this.write(data);
+    return removed;
+  }
+
+  openRecipient(recipientToken) {
+    const data = this.read();
+    const now = Date.now();
+    const found = Object.values(data.gifts).find((gift) => this.authorizedRecipient(gift, recipientToken));
+    if (!found) return null;
+    if (Date.parse(found.recipientTokenExpiresAt) <= now) return { expired: true };
+    if (!found.openedAt) {
+      found.openedAt = new Date(now).toISOString();
+      found.updatedAt = new Date(now).toISOString();
+      this.write(data);
+    }
+    return { gift: this.recipientView(found) };
   }
 
   write(value) {
@@ -83,6 +122,7 @@ class GiftStore {
       creatorTokenHash: hash(creatorToken),
       recipientTokenHash: null,
       recipientTokenExpiresAt: null,
+      openedAt: null,
       completion: null,
       progress: 0,
     };
@@ -94,8 +134,7 @@ class GiftStore {
 
   authorizeCreator(id, creatorToken) {
     const gift = this.read().gifts[id];
-    if (!gift || !creatorToken || !crypto.timingSafeEqual(Buffer.from(gift.creatorTokenHash), Buffer.from(hash(creatorToken)))) return null;
-    return gift;
+    return gift && this.authorized(gift, creatorToken) ? gift : null;
   }
 
   publish(id, creatorToken) {
@@ -119,14 +158,7 @@ class GiftStore {
   }
 
   resolveRecipient(recipientToken) {
-    const data = this.read();
-    const now = Date.now();
-    for (const gift of Object.values(data.gifts)) {
-      if (!gift.recipientTokenHash || !this.authorizedRecipient(gift, recipientToken)) continue;
-      if (Date.parse(gift.recipientTokenExpiresAt) <= now) return { expired: true };
-      return { gift: this.recipientView(gift) };
-    }
-    return null;
+    return this.openRecipient(recipientToken);
   }
 
   authorizedRecipient(gift, recipientToken) {
@@ -145,6 +177,7 @@ class GiftStore {
     if (event.type === 'progress') {
       found.progress = Math.max(found.progress, Math.min(1, Number(event.progress) || 0));
     } else {
+      if (found.completion) return { gift: this.recipientView(found) };
       found.progress = 1;
       found.status = 'completed';
       found.completion = { score: Math.max(0, Math.min(1000, Number(event.score) || 0)), completedAt: new Date().toISOString() };
@@ -164,12 +197,12 @@ class GiftStore {
   }
 
   creatorView(gift) {
-    return { id: gift.id, recipientName: gift.recipientName, senderName: gift.senderName, message: gift.message, occasion: gift.occasion, themeId: gift.themeId, createdAt: gift.createdAt, expiresAt: gift.expiresAt, status: gift.status, completion: gift.completion };
+    return { id: gift.id, recipientName: gift.recipientName, senderName: gift.senderName, message: gift.message, occasion: gift.occasion, themeId: gift.themeId, createdAt: gift.createdAt, expiresAt: gift.expiresAt, status: gift.status, progress: gift.progress, openedAt: gift.openedAt, completion: gift.completion };
   }
 
   recipientView(gift) {
-    return { id: gift.id, recipientName: gift.recipientName, senderName: gift.senderName, message: gift.message, occasion: gift.occasion, themeId: gift.themeId, expiresAt: gift.recipientTokenExpiresAt, status: gift.status, progress: gift.progress, completion: gift.completion };
+    return { id: gift.id, recipientName: gift.recipientName, senderName: gift.senderName, message: gift.message, occasion: gift.occasion, themeId: gift.themeId, expiresAt: gift.recipientTokenExpiresAt, status: gift.status, progress: gift.progress, openedAt: gift.openedAt, completion: gift.completion };
   }
 }
 
-module.exports = { GiftStore, DEFAULT_TTL_MS, validateGift, hash };
+module.exports = { GiftStore, DEFAULT_TTL_MS, DEFAULT_RETENTION_MS, validateGift, hash };

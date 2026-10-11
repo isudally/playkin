@@ -2,7 +2,7 @@
 
 This is the authoritative delivery status for the repository. Feature lists in older documents describe product intent or historical work; they are not release-readiness evidence.
 
-Last verified: 2026-10-11 on merged `main@fdd1c53b50d649e6d1d78783b24f0d2e2f1c3738` after PR [#3](https://github.com/isudally/playkin/pull/3), with the active `Protect main - CI required` ruleset. Phase 1B is open as [PR #4](https://github.com/isudally/playkin/pull/4) on `phase1b/first-complete-gift`; production deployment remains deferred.
+Last verified: 2026-10-11 on `phase1b/first-complete-gift` for open [PR #4](https://github.com/isudally/playkin/pull/4), based on merged `main@fdd1c53b50d649e6d1d78783b24f0d2e2f1c3738`, with the active `Protect main - CI required` ruleset. Production deployment remains deferred.
 
 ## Current status
 
@@ -22,7 +22,7 @@ Last verified: 2026-10-11 on merged `main@fdd1c53b50d649e6d1d78783b24f0d2e2f1c37
 | Server-side AI replacement | PARTIAL | Phase 1B exposes a server-only `/api/ai/suggestions` boundary that is intentionally disabled until provider credentials and an approved product contract exist. No live AI claim is made. |
 | Client bundle secret scan | VERIFIED WORKING | GitHub Actions scanned the same fresh `web-build` produced by CI; the scanner passed. The deliberate provider-key fixture failed the scanner locally and was removed. |
 | Payment | NOT IMPLEMENTED | No payment provider or entitlement backend is in this Phase 0 scope. |
-| Server persistence / recipient links | VERIFIED WORKING | Phase 1B has a validated server-side JSON persistence boundary, hashed opaque expiring recipient tokens, creator authorization, deletion, rate limiting, invalid-link handling, and persisted completion state. The store is a first-slice local service, not a production database. |
+| Server persistence / recipient links | VERIFIED WORKING | Phase 1B has a validated server-side JSON persistence boundary, hashed opaque expiring recipient tokens, creator authorization, deletion, open tracking, first-write-wins completion, retention purge, invalid-link handling, bounded rate limiting, and persisted completion state. The store is a first-slice local service, not a production database. |
 | Nightly agent publishing | DEFERRED | The current workflow remains a placeholder and retains no write authority in the Phase 0 target. |
 | Main branch governance | VERIFIED WORKING | Active ruleset `Protect main - CI required` targets `main`, requires pull requests and the `lint-and-test` GitHub Actions check, requires up-to-date branches, and blocks force pushes and deletion. |
 | Production deployment | VERIFIED SAFE / DEFERRED | Post-merge deploy workflow passed with the production step gated behind explicit manual dispatch authorization. No production deployment was authorized. Vercel account connectivity remains deferred. |
@@ -38,7 +38,7 @@ Last verified: 2026-10-11 on merged `main@fdd1c53b50d649e6d1d78783b24f0d2e2f1c37
 | Design foundation | VERIFIED WORKING | Browser-native CSS preserves the Playkin dark seasonal direction, responsive layouts, accessible focus states, and temporary artwork note; build and browser checks passed in CI. |
 | Native migration safety | VERIFIED WORKING | `App.tsx` is restored to the legacy Expo/React Native application; the independent Vite runtime is started and built separately. |
 | Production web export | VERIFIED WORKING | PR #3 post-merge CI run `38158616510` produced the Vite export under the pinned Node 18.18.0 toolchain; deployment workflow `38158616486` completed without deployment. |
-| Initial JavaScript bundle | VERIFIED WORKING | The final Phase 1B export measured 160,237 raw JavaScript bytes, below the 300,000-byte budget, with no legacy runtime references. |
+| Initial JavaScript bundle | VERIFIED WORKING | The corrected Phase 1B export measured 162,037 raw JavaScript bytes, below the 300,000-byte budget, with no legacy runtime references. |
 
 ## Phase 1B status
 
@@ -47,11 +47,14 @@ Last verified: 2026-10-11 on merged `main@fdd1c53b50d649e6d1d78783b24f0d2e2f1c37
 | Server gift persistence | VERIFIED WORKING | `server/store.cjs` validates names, message, occasion, and theme; writes a server-side JSON record; supports creator-authorized deletion; and has passing persistence tests. This is a replaceable first-slice store, not a production database. |
 | Secure recipient delivery | VERIFIED WORKING | Recipient links use 256-bit random opaque tokens; only SHA-256 hashes are persisted; links expire after seven days; invalid and expired links return explicit errors; rate limiting is applied at the HTTP boundary. |
 | Playable experience | VERIFIED WORKING | `web/game/memory-trail.ts` implements Dodo's Memory Trail with three personalized clues, progression, scoring, completion events, teardown, and the typed GameModule contract. |
-| Completion persistence | VERIFIED WORKING | Recipient completion is posted to the server and remains complete after a separate browser reload. |
-| Privacy and abuse boundaries | PARTIAL | Creator-token authorization, recipient-token isolation, deletion, input limits, body-size limits, expiry, and rate limiting are present. Identity, moderation, audit retention, and production database controls remain follow-up work. |
 | Server-side AI | PARTIAL | The server exposes a disabled provider boundary without client credentials. Live provider integration is not implemented or claimed. |
-| Phase 1B browser evidence | VERIFIED WORKING | Chromium at 390x844 proved creator save, secure-link generation, separate browser delivery, all three game rounds, persisted completion after reload, invalid-link handling, admin navigation, and no unexpected browser errors. |
-| Phase 1B release state | READY TO MERGE | PR #4 is open and mergeable with required CI and deployment-safety checks passed. No production deployment was performed. |
+| Completion persistence | VERIFIED WORKING | The first completion score and timestamp are immutable; conflicting repeat completion requests cannot overwrite them. Client-reported scores are stored as gameplay claims, not independently verified results. |
+| Gift-open tracking | VERIFIED WORKING | Recipient-link resolution records `openedAt`; an authenticated creator status endpoint and UI expose opened/completed state. |
+| Creator deletion and retention | VERIFIED WORKING | The creator UI can delete a gift and invalidate its link. Expired records are purged after a documented 30-day retention window; corrupt storage fails closed instead of resetting to an empty database. |
+| Privacy and abuse boundaries | PARTIAL | Creator-token authorization, recipient-token isolation, deletion, input limits, bounded body parsing, expiry, retention, and socket-based bounded rate limiting are present. Identity, moderation, audit retention, and production database controls remain follow-up work. |
+| Gameplay product accuracy | PARTIAL | The three-round Memory Trail is a substantive vertical-slice contract demonstration, not a commercially premium catalogue experience. The full sender message is now revealed only after completion; richer game design and final artwork remain follow-up work. |
+| Phase 1B browser evidence | VERIFIED WORKING | Chromium at 390x844 proved creator save, secure-link generation, separate browser delivery, all three game rounds, persisted completion after reload, creator status refresh showing opened/completed, creator deletion, deleted-link handling, and no unexpected browser errors. |
+| Phase 1B release state | PENDING CI | Local correction checks pass; PR #4 remains open and must receive the correction commit and fresh GitHub verification before merge-readiness can be claimed. |
 
 ## Phase 0 acceptance gates
 
@@ -60,7 +63,7 @@ Last verified: 2026-10-11 on merged `main@fdd1c53b50d649e6d1d78783b24f0d2e2f1c37
 - Tests pass, or any remaining failures are named and linked to an owner/retirement task.
 - TypeScript diagnostics do not exceed `quality-baseline.json`.
 - Web export succeeds under Node 18.18.0.
-- Client bundle scan rejects provider keys, server payment keys, provider API URLs, and bearer headers.
+- Client bundle scan rejects provider keys, server payment keys, provider API URLs, and provider-style secret tokens. Legitimate creator bearer authorization is allowed and is tested through the authenticated application path.
 - Chromium opens the exported app without page errors or console errors.
 - Negative controls prove the type baseline and bundle scan fail when deliberately made worse.
 
@@ -102,3 +105,16 @@ Last verified: 2026-10-11 on merged `main@fdd1c53b50d649e6d1d78783b24f0d2e2f1c37
 - Runtime boundary: `npm run api:dev` serves the first-slice gift service on localhost; Vite proxies `/api` during local development. The production deployment workflow was not changed to deploy this service.
 - Remaining dependencies: production database, identity, moderation/audit policy, final Dodo/game artwork, hosted API runtime, live server-side AI, payments, uploads, and analytics.
 - PR: [#4](https://github.com/isudally/playkin/pull/4), base `main`, head `phase1b/first-complete-gift`, open and mergeable. Latest verified implementation commit: `39bfa31d450be65c94560200588de575224618c7`.
+
+## Phase 1B correctness correction record
+
+- Scope: targeted correction on PR #4 only. No merge, deployment, architecture migration, or Phase 1C work was performed.
+- Completion: `server/store.test.cjs` now proves first-write-wins with conflicting repeat scores and timestamps; the server treats the score as a client-reported claim.
+- Open/status: valid recipient resolution persists `openedAt`; `GET /api/gifts/:id` requires the creator token and the creator UI refreshes opened/completed status.
+- Deletion/retention: the creator UI confirms deletion, deletion invalidates the recipient link, records older than seven days plus a 30-day retention window are purged during request processing, and corrupt JSON raises `STORE_CORRUPT` instead of resetting data.
+- HTTP controls: `server/rate-limit.cjs` bounds key memory, the server uses the socket address rather than arbitrary forwarded headers, and body parsing stops accumulating after 32,000 bytes.
+- Bundle scanner: generic bearer-header matching was removed because it rejected legitimate creator authorization; provider key names, provider URLs, payment server keys, and provider-style secret tokens remain blocked.
+- Local evidence: web type check, production Vite build, web bundle guard, client bundle scan, six server tests, and the 390x844 Chromium journey passed. The journey included separate-browser delivery, completion reload, status refresh, creator deletion, and deleted-link handling.
+- Web export: Vite 5.4.19 produced one 162,037-byte JavaScript file; the independent bundle budget and client secret scan passed on that same fresh export.
+- Negative control: a temporary `EXPO_PUBLIC_OPENAI_API_KEY` fixture caused the client-bundle scan to fail, then was removed. The clean scan passed again.
+- Product boundary: Memory Trail remains a small vertical slice rather than a commercially premium catalogue experience; the full message is revealed only after completion. Final artwork and richer game design remain deferred.

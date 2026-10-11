@@ -44,3 +44,11 @@ The first end-to-end slice uses a small Node HTTP service in `server/` and a rep
 The first experience is `dodos-memory-trail`, a DOM/React GameModule with three personalized clues, scoring, progression, completion events, subscriptions, and teardown. The host owns the gift token, server persistence, and completion write; the game owns only its interaction state. The Phase 1B runtime proves the journey in a separate browser context at a mobile viewport.
 
 Server-side AI is represented by an explicit disabled `/api/ai/suggestions` boundary. Provider credentials are not present in the client or server configuration, and no live AI capability is claimed until the provider, privacy, cost, and product contract are approved.
+
+## Phase 1B correctness boundaries
+
+Gift completion is first-write-wins: the first persisted score and timestamp are immutable, and client-reported scores are not treated as independently verified gameplay results. Resolving a valid recipient link records `openedAt`; creator status is exposed only through the creator token. Creators can delete gifts through the web flow, invalidating their recipient links.
+
+Gift records expire for delivery after seven days and remain eligible for creator recovery/deletion for a defined 30-day retention window. The local service purges records beyond that window during request processing. Corrupt JSON storage fails closed with a service error; it is never silently replaced with an empty database.
+
+The first Memory Trail is intentionally a small, three-round vertical slice. It proves the GameModule and persistence journey but is not represented as a finished premium catalogue experience. The sender message is withheld until completion; final Dodo artwork, richer game design, and broader catalogue work remain future scope.

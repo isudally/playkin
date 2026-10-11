@@ -36,7 +36,7 @@ export class MemoryTrailGame implements GameModule {
     this.rounds = [
       { prompt: 'What is the little world celebrating?', options: [{ id: 'occasion', label: titleCase(occasion) }, { id: 'ordinary-day', label: 'An ordinary Tuesday' }, { id: 'weather', label: 'A weather report' }], answerId: 'occasion' },
       { prompt: 'Who sent this little world your way?', options: [{ id: 'dodo', label: 'A curious dodo' }, { id: 'sender', label: context.input.senderName }, { id: 'delivery', label: 'The delivery desk' }], answerId: 'sender' },
-      { prompt: 'Which message belongs at the heart of this gift?', options: [{ id: 'message', label: context.input.message || 'Something made just for you' }, { id: 'ad', label: 'Please review this advertisement' }, { id: 'receipt', label: 'Your receipt is attached' }], answerId: 'message' },
+      { prompt: 'What should you carry with you from this little world?', options: [{ id: 'message', label: 'A little piece of this moment' }, { id: 'ad', label: 'Please review this advertisement' }, { id: 'receipt', label: 'Your receipt is attached' }], answerId: 'message' },
     ];
   }
 

@@ -1,11 +1,14 @@
 const http = require('node:http');
 const path = require('node:path');
 const { GiftStore } = require('./store.cjs');
+const { RateLimiter } = require('./rate-limit.cjs');
 
 const port = Number(process.env.PLAYKIN_PORT || 8787);
 const dataFile = process.env.PLAYKIN_DATA_FILE || path.join(process.cwd(), '.playkin-data', 'gifts.json');
 const store = new GiftStore(dataFile);
-const requestLog = new Map();
+const rateLimiter = new RateLimiter();
+const MAX_BODY_BYTES = 32_000;
+let lastRetentionSweep = 0;
 
 function json(response, status, body) {
   response.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' });
@@ -13,29 +16,38 @@ function json(response, status, body) {
 }
 
 function requestIp(request) {
-  return request.headers['x-forwarded-for']?.split(',')[0]?.trim() || request.socket.remoteAddress || 'unknown';
+  return request.socket.remoteAddress || 'unknown';
 }
 
 function rateLimited(request) {
-  const key = requestIp(request);
-  const now = Date.now();
-  const recent = (requestLog.get(key) || []).filter((stamp) => now - stamp < 60_000);
-  recent.push(now);
-  requestLog.set(key, recent);
-  return recent.length > 120;
+  return !rateLimiter.allow(requestIp(request));
 }
 
 function body(request) {
   return new Promise((resolve, reject) => {
+    const contentLength = Number(request.headers['content-length'] || 0);
+    if (contentLength > MAX_BODY_BYTES) {
+      request.resume();
+      reject(Object.assign(new Error('Request body is too large'), { code: 'BODY_TOO_LARGE' }));
+      return;
+    }
     let value = '';
+    let settled = false;
     request.on('data', (chunk) => {
+      if (settled) return;
       value += chunk;
-      if (value.length > 32_000) reject(new Error('Request body is too large'));
+      if (Buffer.byteLength(value, 'utf8') > MAX_BODY_BYTES) {
+        settled = true;
+        request.resume();
+        reject(Object.assign(new Error('Request body is too large'), { code: 'BODY_TOO_LARGE' }));
+      }
     });
     request.on('end', () => {
+      if (settled) return;
+      settled = true;
       try { resolve(value ? JSON.parse(value) : {}); } catch { reject(new Error('Request body must be JSON')); }
     });
-    request.on('error', reject);
+    request.on('error', (error) => { if (!settled) { settled = true; reject(error); } });
   });
 }
 
@@ -56,9 +68,15 @@ function server() {
     const parts = url.pathname.split('/').filter(Boolean);
     try {
       if (request.method === 'GET' && url.pathname === '/api/health') return json(response, 200, { ok: true, service: 'playkin-gift-service' });
+      if (Date.now() - lastRetentionSweep > 60_000) { store.purgeExpired(); lastRetentionSweep = Date.now(); }
       if (request.method === 'POST' && url.pathname === '/api/gifts') {
         const result = store.create(await body(request));
         return json(response, 201, result);
+      }
+      if (parts[0] === 'api' && parts[1] === 'gifts' && parts[2] && request.method === 'GET') {
+        const gift = store.authorizeCreator(parts[2], creatorToken(request));
+        if (!gift) return json(response, 403, { error: 'Creator authorization failed.' });
+        return json(response, 200, { gift: store.creatorView(gift) });
       }
       if (parts[0] === 'api' && parts[1] === 'gifts' && parts[2] && parts[3] === 'publish' && request.method === 'POST') {
         const result = store.publish(parts[2], creatorToken(request));
@@ -70,7 +88,7 @@ function server() {
         return json(response, 200, { deleted: true });
       }
       if (parts[0] === 'api' && parts[1] === 'recipient' && parts[2] && request.method === 'GET') {
-        const result = store.resolveRecipient(parts[2]);
+        const result = store.openRecipient(parts[2]);
         if (!result) return json(response, 404, { error: 'Gift link not found.' });
         if (result.expired) return json(response, 410, { error: 'This gift link has expired.' });
         return json(response, 200, result);
@@ -84,7 +102,7 @@ function server() {
       if (request.method === 'POST' && url.pathname === '/api/ai/suggestions') return json(response, 503, { error: 'Server-side AI boundary is reserved and not configured.' });
       return json(response, 404, { error: 'Not found.' });
     } catch (error) {
-      const status = /invalid|required|large|JSON/.test(error.message) ? 400 : 500;
+      const status = error.code === 'BODY_TOO_LARGE' ? 413 : error.code === 'STORE_CORRUPT' ? 503 : /invalid|required|large|JSON/.test(error.message) ? 400 : 500;
       return json(response, status, { error: status === 400 ? error.message : 'Unexpected server error.' });
     }
   });
