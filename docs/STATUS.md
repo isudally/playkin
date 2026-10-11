@@ -2,7 +2,7 @@
 
 This is the authoritative delivery status for the repository. Feature lists in older documents describe product intent or historical work; they are not release-readiness evidence.
 
-Last verified: 2026-10-11 on PR #2 (`phase0/foundation` at `b72b077` before the verification-only follow-up), based on `main@acb4e893` plus the isolated typography fix from open PR #1.
+Last verified: 2026-10-11 on PR #2 (`phase0/foundation` at `5c7d5c4`), based on `main@acb4e893` plus the isolated typography fix from open PR #1.
 
 ## Current status
 
@@ -38,8 +38,8 @@ Last verified: 2026-10-11 on PR #2 (`phase0/foundation` at `b72b077` before the 
 ## Phase 0 verification record
 
 - PR: [#2](https://github.com/isudally/playkin/pull/2), base `main`, head `phase0/foundation`.
-- GitHub CI: run `38129861304`, job `114441761816`, successful in 4m 41s. Steps completed: `npm ci`, ESLint, Jest (86 tests), tracked TypeScript baseline, web export, client-bundle scan, Chromium installation, and browser/onboarding smoke test.
-- Vercel workflow: the first PR run failed before deployment because the optional preview path had no `VERCEL_*` secrets. The follow-up guard makes that preview step skip when unconfigured; the production step remains conditional on pushes to `main` and unchanged.
+- GitHub CI: run `38130357982`, job `114443222822`, successful in 1m 41s on `5c7d5c4`. Steps completed: `npm ci`, ESLint, Jest (86 tests), tracked TypeScript baseline, web export, client-bundle scan, Chromium installation, and browser/onboarding smoke test.
+- Vercel workflow: run `38130358044` succeeded in 1m 8s; the unconfigured PR preview step was skipped. The production step remains conditional on pushes to `main` and unchanged.
 - Local exact install: `npm ci --no-audit --no-fund` completed with 1,730 packages. Local Node 24 emitted the repository's expected engine warning; this is not the CI runtime result.
 - Negative controls: setting the TypeScript baseline below the observed 63 diagnostics failed `verify:types`; adding a provider-key fixture failed `verify:client-bundle`; both fixtures were removed/restored.
 
