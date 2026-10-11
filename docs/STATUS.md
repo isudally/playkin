@@ -2,7 +2,7 @@
 
 This is the authoritative delivery status for the repository. Feature lists in older documents describe product intent or historical work; they are not release-readiness evidence.
 
-Last verified: 2026-10-11 on merged `main@f8e71af9ca244850a5f99cfa021888cb734f3fc4`, with the active `Protect main - CI required` ruleset. Phase 1A work is currently on `phase1a/web-foundation` and remains unmerged.
+Last verified: 2026-10-11 on merged `main@f8e71af9ca244850a5f99cfa021888cb734f3fc4` and open PR [#3](https://github.com/isudally/playkin/pull/3) at `phase1a/web-foundation@1e5c6e3`, with the active `Protect main - CI required` ruleset. Phase 1A remains unmerged.
 
 ## Current status
 
@@ -31,12 +31,12 @@ Last verified: 2026-10-11 on merged `main@f8e71af9ca244850a5f99cfa021888cb734f3f
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Web route shell | PARTIAL | New web-only shell implements home/discovery, creator, recipient, and admin boundaries on `phase1a/web-foundation`; CI browser verification is pending. |
-| Shared domain model | VERIFIED LOCALLY | `src/web/domain/playkin-domain.ts` defines the draft and future integration interfaces without implementing server services. |
-| GameModule contract | VERIFIED LOCALLY | `src/web/domain/game-module.ts` defines manifest, personalization, theme/assets, difficulty, lifecycle, structured events, subscriptions, and teardown. |
-| Design foundation | VERIFIED LOCALLY | Web theme adapts the existing `creator-wave` seasonal tokens and documents temporary artwork. |
-| Native migration safety | VERIFIED LOCALLY | `App.tsx` keeps the existing native navigator and selects the new shell only for `Platform.OS === 'web'`. |
-| Production web export | BLOCKED LOCALLY / PENDING CI | The local machine has Node 24 while the pinned project toolchain is Node 18.18.0; Expo 49 fails locally in Metro's Node 24 external shim. The authoritative check is the GitHub Node 18 job. |
+| Web route shell | VERIFIED WORKING | PR #3's required GitHub CI completed the fresh-export Chromium smoke test across discovery, creator, recipient, admin, local draft persistence, and the 390x844 mobile viewport. |
+| Shared domain model | VERIFIED WORKING | `src/web/domain/playkin-domain.ts` defines the draft and future integration interfaces without implementing server services; type verification passed in CI. |
+| GameModule contract | VERIFIED WORKING | `src/web/domain/game-module.ts` defines manifest, personalization, theme/assets, difficulty, lifecycle, structured events, subscriptions, and teardown; type verification passed in CI. |
+| Design foundation | VERIFIED WORKING | Web theme adapts the existing `creator-wave` seasonal tokens and documents temporary artwork; fresh web export and browser boot passed in CI. |
+| Native migration safety | VERIFIED WORKING | `App.tsx` keeps the existing native navigator and selects the new shell only for `Platform.OS === 'web'`; CI retained the Phase 0 verification suite. |
+| Production web export | VERIFIED WORKING | PR #3 CI run `38154738978` completed the fresh `npm run build:web` under Node 18.18.0. Local Node 24 remains non-authoritative and still fails Expo 49's Metro external shim. |
 | Phase 1B services | NOT IMPLEMENTED | Persistence, secure recipient links, server AI, payments, uploads, and analytics are interfaces only. |
 
 ## Phase 0 acceptance gates
@@ -60,8 +60,16 @@ Last verified: 2026-10-11 on merged `main@f8e71af9ca244850a5f99cfa021888cb734f3f
 
 ## Phase 1 handoff queue
 
-1. Complete CI and fresh-export browser verification for `phase1a/web-foundation`.
-2. Replace the retired client-side AI path with a small server boundary for gift drafts, generated content, and server-only provider credentials.
-3. Persist a gift, issue an opaque expiring recipient token, and render the recipient route without login.
-4. Ship one complete creator-to-recipient game module with completion tracking.
-5. Add premium visual assets, responsive states, accessibility, performance budgets, and mobile-browser acceptance tests from the first vertical slice.
+1. Replace the retired client-side AI path with a small server boundary for gift drafts, generated content, and server-only provider credentials.
+2. Persist a gift, issue an opaque expiring recipient token, and render the recipient route without login.
+3. Ship one complete creator-to-recipient game module with completion tracking.
+4. Add premium visual assets, responsive states, accessibility, performance budgets, and mobile-browser acceptance tests from the first vertical slice.
+
+## Phase 1A verification record
+
+- PR: [#3](https://github.com/isudally/playkin/pull/3), base `main`, head `phase1a/web-foundation`, initial implementation commit `1e5c6e3`.
+- GitHub CI: run [`38154738978`](https://github.com/isudally/playkin/actions/runs/38154738978), required job `lint-and-test`, successful. It completed dependency installation, lint, Jest, the tracked TypeScript baseline, Node 18.18.0 web export, same-export client-bundle secret scan, Chromium installation, and browser smoke test.
+- Browser evidence: the fresh export rendered at 390x844; the smoke test covered the discovery route, creator fields and local draft, recipient development preview, return to discovery, and admin boundary without page or console errors.
+- Deployment workflow: run [`38154739057`](https://github.com/isudally/playkin/actions/runs/38154739057), job `deploy`, successful. No Vercel preview was configured and no production deployment was authorized; production remains manual-only.
+- Local verification: route tests passed (2 tests), `verify:types` passed against the existing 63-diagnostic legacy baseline with zero new web diagnostics, and ESLint passed with 0 errors and 228 warnings. The local worktree was clean before PR creation.
+- Status: Phase 1A is ready for review, not merged. Phase 1B services remain not implemented.
