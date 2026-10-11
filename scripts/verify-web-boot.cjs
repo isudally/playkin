@@ -52,6 +52,7 @@ async function main() {
   const url = `http://127.0.0.1:${address.port}/`;
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
+  await page.setViewportSize({ width: 390, height: 844 });
   const failures = [];
 
   page.on('pageerror', (error) => failures.push(`pageerror: ${error.message}`));
@@ -71,28 +72,25 @@ async function main() {
       await page.waitForTimeout(250);
     };
 
-    // First-time onboarding: exercise the typed nested-tab destination.
+    // Phase 1A creator-to-recipient navigation on a mobile viewport.
     await page.evaluate(() => window.localStorage.clear());
     await page.reload({ waitUntil: 'networkidle' });
-    await expectText('Welcome to GameForge! 🎮');
-    await clickText('Get Started');
-    await expectText('What do you want to build? 🎯');
-    await clickText('Full Games');
-    await clickText('Continue');
-    await expectText('Pick your style 🎨');
-    await clickText('Pixel Perfect');
-    await clickText('Continue');
-    await expectText("What's your experience level? 💪");
-    await clickText('Beginner');
-    await clickText('Start Creating!');
-    await expectText('Game Templates');
-
-    // Returning-user bypass: persisted completion opens the main shell directly.
-    await page.evaluate(() => window.localStorage.setItem('onboarding_completed', 'true'));
-    await page.reload({ waitUntil: 'networkidle' });
-    await expectText('Create a Gift');
-    await clickText('Templates');
-    await expectText('Game Templates');
+    await expectText('Make a little magic for someone you love.');
+    await clickText('Create a gift');
+    await expectText('Start with the person, not a template.');
+    await page.getByLabel('Who is this for?').fill('Ari');
+    await page.getByLabel('Who is it from?').fill('Ismael');
+    await page.getByLabel('A message to carry through').fill('A small world made just for you.');
+    await clickText('Birthday');
+    await clickText('Save local draft');
+    await expectText('Your development preview is ready.');
+    await clickText('Preview recipient view');
+    await expectText('A little world, made for Ari.');
+    await expectText('Development preview · not published · no secure recipient token issued.');
+    await clickText('Back to discovery');
+    await expectText('Make a little magic for someone you love.');
+    await clickText('Admin');
+    await expectText('Not available in Phase 1A');
 
     if (failures.length > 0) {
       throw new Error(`Browser boot reported errors:\n${failures.join('\n')}`);

@@ -29,3 +29,9 @@ The host owns identity, gift state, token access, persistence, sharing, payment 
 ## Phase 1 implementation order
 
 Start with DOM/React modules for the first story, quiz, or memory experience. Add a canvas engine only when the selected experience needs it. Defer Babylon, A-Frame, VR/AR, multiplayer, user-generated publishing, and autonomous publishing until a measured product need exists.
+
+## Phase 1A web foundation
+
+The web migration is incremental: `App.tsx` selects the new web shell only for the web platform, while the existing Expo/React Native navigator remains available on native targets as migration reference and rollback surface. The Phase 1A shell owns route navigation and local development preview state; it does not claim to publish gifts, issue recipient links, process payments, or generate AI content.
+
+Existing concepts deliberately reused or adapted: seasonal theme tokens from `src/design-tokens/theme.ts`, the Dodo companion identity as clearly temporary development artwork, the gift questionnaire concept and personalisation vocabulary from `src/types/giftforge.ts`, and the existing creator/recipient product direction. Native screens and provider integrations were not copied into the web bundle.
