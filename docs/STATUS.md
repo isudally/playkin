@@ -9,16 +9,17 @@ Last verified: 2026-10-11 on `phase0/foundation`, based on `main@acb4e893` plus 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
 | Repository checkout | VERIFIED WORKING | Clean baseline was fetched and the open typography change was inspected. |
-| Dependency installation | PARTIAL | Lockfile is being normalized to HTTPS; a clean install must run under Node 18.18.0/npm 9.8.1. |
+| Dependency installation | VERIFIED WORKING | `npm ci --ignore-scripts --prefer-offline --no-audit --no-fund` completed with 1,730 packages; the SSH Git dependency was replaced by the published registry release. |
 | Typography blank-screen fix | VERIFIED WORKING | PR #1 adds the missing platform font token; its PR remains open and unmerged. |
 | Onboarding persistence | PARTIAL | Completion is now read and written through one tested helper; full browser/device journey remains pending. |
 | Onboarding navigation | PARTIAL | Gift stays on its stack route; creator/learning/explore routes now enter the nested tab navigator correctly. |
-| Unit tests | PARTIAL | Existing legacy failures are being repaired or explicitly tracked; final Phase 0 result must come from the CI-equivalent run. |
+| Unit tests | VERIFIED WORKING | 8 suites and 86 tests pass locally after the targeted fixes. |
 | Type checking | BROKEN / TRACKED DEBT | The legacy surface has known diagnostics; `verify:types` prevents the count from increasing. |
-| Lint | PARTIAL | Known blocking lint errors are being corrected; warnings remain legacy debt. |
+| Lint | VERIFIED WORKING | ESLint exits successfully with 0 errors and 228 legacy warnings. |
 | Web export | DEFERRED FOR COMPATIBLE RUNTIME | Expo SDK 49 requires the pinned Node 18.18.0 toolchain; Node 24 is not an accepted verification runtime. |
 | Browser boot | NOT VERIFIED | CI now builds the export, scans it, and launches Chromium; no green CI result exists for this branch yet. |
-| Client AI credentials | RETIRED | The client no longer reads provider keys or calls provider APIs; generation uses the existing local fallback until Phase 1 server work. |
+| Client AI credentials | RETIRED | The client no longer reads provider keys, embeds provider endpoints, or calls provider APIs; generation uses the existing local fallback until Phase 1 server work. |
+| Client bundle secret scan | VERIFIED WORKING | Scanner passes on the available bundle directory and failed its deliberate provider-key negative control. |
 | Payment | NOT IMPLEMENTED | No payment provider or entitlement backend is in this Phase 0 scope. |
 | Server persistence / recipient links | NOT IMPLEMENTED | Reserved for the Phase 1 vertical slice. |
 | Nightly agent publishing | DEFERRED | The current workflow remains a placeholder and retains no write authority in the Phase 0 target. |
