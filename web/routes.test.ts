@@ -5,6 +5,7 @@ describe('independent web routes', () => {
     expect(resolveWebRoute('/')).toEqual({ name: 'home' });
     expect(resolveWebRoute('/create')).toEqual({ name: 'create' });
     expect(resolveWebRoute('/recipient/local-preview')).toEqual({ name: 'recipient', giftId: 'local-preview' });
+    expect(resolveWebRoute('/gift/opaque-token')).toEqual({ name: 'recipient', giftId: 'opaque-token' });
     expect(resolveWebRoute('/admin')).toEqual({ name: 'admin' });
   });
 

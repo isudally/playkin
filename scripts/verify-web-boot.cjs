@@ -17,8 +17,24 @@ const contentTypes = {
   '.webp': 'image/webp',
 };
 
-function startStaticServer() {
+function startApiServer() {
+  const { server } = require('../server/index.cjs');
+  const apiServer = server();
+  return new Promise((resolve) => apiServer.listen(0, '127.0.0.1', () => resolve(apiServer)));
+}
+
+function proxyApi(request, response, apiPort) {
+  const proxy = http.request({ hostname: '127.0.0.1', port: apiPort, path: request.url, method: request.method, headers: request.headers }, (apiResponse) => {
+    response.writeHead(apiResponse.statusCode || 500, apiResponse.headers);
+    apiResponse.pipe(response);
+  });
+  proxy.on('error', (error) => { response.writeHead(502); response.end(error.message); });
+  request.pipe(proxy);
+}
+
+function startStaticServer(apiPort) {
   const server = http.createServer((request, response) => {
+    if ((request.url || '').startsWith('/api/')) return proxyApi(request, response, apiPort);
     const requestPath = decodeURIComponent((request.url || '/').split('?')[0]);
     const relativePath = requestPath === '/' ? '/index.html' : requestPath;
     const candidate = path.resolve(bundleDirectory, `.${relativePath}`);
@@ -47,17 +63,24 @@ async function main() {
     throw new Error(`Web export is missing index.html: ${bundleDirectory}`);
   }
 
-  const server = await startStaticServer();
+  process.env.PLAYKIN_DATA_FILE = path.join(bundleDirectory, '.test-gifts.json');
+  const apiServer = await startApiServer();
+  const apiAddress = apiServer.address();
+  const server = await startStaticServer(apiAddress.port);
   const address = server.address();
   const url = `http://127.0.0.1:${address.port}/`;
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
   await page.setViewportSize({ width: 390, height: 844 });
   const failures = [];
+  let expectingInvalidLink = false;
 
   page.on('pageerror', (error) => failures.push(`pageerror: ${error.message}`));
   page.on('console', (message) => {
-    if (message.type() === 'error') failures.push(`console: ${message.text()}`);
+    if (message.type() === 'error' && !expectingInvalidLink) failures.push(`console: ${message.text()}`);
+  });
+  page.on('response', (response) => {
+    if (response.status() >= 400) failures.push(`response ${response.status()}: ${response.url()}`);
   });
 
   try {
@@ -77,36 +100,62 @@ async function main() {
     await expectText('Start with the person, not a template.');
     await clickText('Discover');
     await expectText('Make a little magic for someone you love.');
-
-    // Phase 1A creator-to-recipient navigation on a mobile viewport.
-    await page.evaluate(() => window.localStorage.clear());
-    await page.reload({ waitUntil: 'networkidle' });
-    await expectText('Make a little magic for someone you love.');
     await clickText('Create a gift');
     await expectText('Start with the person, not a template.');
+
+    // Phase 1B creator -> server persistence -> secure link.
     await page.getByLabel('Who is this for?').fill('Ari');
     await page.getByLabel('Who is it from?').fill('Ismael');
     await page.getByLabel('A message to carry through').fill('A small world made just for you.');
     await clickText('Birthday');
-    await clickText('Save local draft');
-    await expectText('Your development preview is ready.');
-    await clickText('Preview recipient view');
-    await expectText('A little world, made for Ari.');
-    await expectText('Development preview · not published · no secure recipient token issued.');
-    await page.reload({ waitUntil: 'networkidle' });
-    await expectText('A little world, made for Ari.');
-    await clickText('Back to discovery');
-    await expectText('Make a little magic for someone you love.');
+    await clickText('Save gift');
+    await expectText('The gift is safely stored.');
+    await clickText('Generate secure link');
+    await expectText('Your playable gift is ready.');
+    const recipientUrl = await page.locator('.gift-link').getAttribute('href');
+    if (!recipientUrl) throw new Error('Secure recipient link was not rendered.');
+
+    // Open in a separate browser context to prove cross-browser delivery.
+    const recipientContext = await browser.newContext();
+    const recipientPage = await recipientContext.newPage();
+    const recipientFailures = [];
+    recipientPage.on('pageerror', (error) => recipientFailures.push(`recipient pageerror: ${error.message}`));
+    recipientPage.on('console', (message) => { if (message.type() === 'error') recipientFailures.push(`recipient console: ${message.text()}`); });
+    recipientPage.on('response', (response) => { if (response.status() >= 400) recipientFailures.push(`recipient response ${response.status()}: ${response.url()}`); });
+    await recipientPage.setViewportSize({ width: 390, height: 844 });
+    await recipientPage.goto(recipientUrl, { waitUntil: 'networkidle' });
+    await recipientPage.getByText('A little world, made for Ari.', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await recipientPage.getByRole('button', { name: 'Begin the trail' }).click();
+    await recipientPage.getByRole('button', { name: 'Birthday' }).click();
+    await recipientPage.getByRole('button', { name: 'Ismael' }).click();
+    await recipientPage.getByRole('button', { name: 'A small world made just for you.' }).click();
+    await recipientPage.getByText('JOURNEY COMPLETE', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await recipientPage.reload({ waitUntil: 'networkidle' });
+    await recipientPage.getByText('JOURNEY COMPLETE', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await recipientContext.close();
+    if (recipientFailures.length > 0) throw new Error(`Recipient browser reported errors:\n${recipientFailures.join('\n')}`);
+
+    expectingInvalidLink = true;
+    await page.goto(`${url}gift/not-a-real-token`, { waitUntil: 'networkidle' });
+    await page.getByText('This gift could not be opened.', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    // The 404 is the expected product response for an invalid link, not a browser failure.
+    for (let index = failures.length - 1; index >= 0; index -= 1) {
+      if (failures[index].includes('not-a-real-token')) failures.splice(index, 1);
+    }
+    expectingInvalidLink = false;
     await clickText('Admin');
-    await expectText('Not available in Phase 1A');
+    await expectText('Operational boundary established');
 
     if (failures.length > 0) {
       throw new Error(`Browser boot reported errors:\n${failures.join('\n')}`);
     }
-    console.log(`Browser boot and onboarding navigation passed: ${url}`);
+    console.log(`Phase 1B browser gift journey passed: ${url}`);
   } finally {
     await browser.close();
     server.close();
+    apiServer.close();
+    const testData = path.join(bundleDirectory, '.test-gifts.json');
+    if (fs.existsSync(testData)) fs.unlinkSync(testData);
   }
 }
 
