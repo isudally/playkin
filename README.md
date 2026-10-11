@@ -2,6 +2,8 @@
 
 > AI-powered game creation platform - Create professional mobile games, VR experiences, and educational content with **zero coding required**.
 
+> **Delivery status:** This repository is in a controlled web-first migration. The authoritative verified status is in [`docs/STATUS.md`](docs/STATUS.md); the feature list below includes historical product intent and is not a release-readiness claim.
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![React Native](https://img.shields.io/badge/React%20Native-0.72-61DAFB.svg)](https://reactnative.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.1-blue.svg)](https://www.typescriptlang.org/)

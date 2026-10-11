@@ -23,7 +23,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: Install dependencies
@@ -36,4 +36,18 @@ jobs:
         run: npm test
 
       - name: Check TypeScript
-        run: npx tsc --noEmit
+        run: npm run verify:types
+
+      - name: Build web app
+        run: npm run build:web
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
+
+      - name: Scan client bundle for secrets
+        run: npm run verify:client-bundle
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Verify browser boot
+        run: npm run verify:browser

@@ -1,0 +1,9 @@
+{
+  "typescriptErrors": 63,
+  "legacyDebt": [
+    "Navigation route declarations and nested navigator types in src/navigation and src/types",
+    "Theme token compatibility across legacy screens in src/screens and src/components",
+    "Legacy service response shapes and duplicate exports in src/services"
+  ],
+  "retirementPlan": "The Phase 1 web-first domain and navigation packages must not import this legacy surface. Reduce this baseline as each legacy module is retired or migrated; do not add new errors."
+}
