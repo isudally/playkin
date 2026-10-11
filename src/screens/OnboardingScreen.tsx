@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Animated, { FadeInDown, FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { useTheme } from '../contexts/ThemeContext';
 import { RootStackParamList, ArtStyle } from '../types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { hasCompletedOnboarding, markOnboardingCompleted } from '../utils/onboarding';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -38,10 +38,29 @@ export default function OnboardingScreen() {
     experience: null,
   });
 
+  useEffect(() => {
+    let active = true;
+
+    hasCompletedOnboarding()
+      .then((completed) => {
+        if (active && completed) {
+          navigation.replace('MainTabs');
+        }
+      })
+      .catch((error) => {
+        // A storage failure should leave the first-run flow usable.
+        console.warn('Failed to read onboarding state:', error);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [navigation]);
+
   const completeOnboarding = async () => {
     // Save that onboarding has been completed
     try {
-      await AsyncStorage.setItem('onboarding_completed', 'true');
+      await markOnboardingCompleted();
     } catch (error) {
       console.error('Failed to save onboarding state:', error);
       // Continue anyway - user experience is more important than state persistence
@@ -51,11 +70,11 @@ export default function OnboardingScreen() {
     if (data.goal === 'gift') {
       navigation.navigate('GiftForgeWizard');
     } else if (data.goal === 'create') {
-      navigation.navigate('Templates');
+      navigation.replace('MainTabs', { screen: 'Templates' });
     } else if (data.goal === 'learn') {
-      navigation.navigate('Genie');
+      navigation.replace('MainTabs', { screen: 'Genie' });
     } else {
-      navigation.navigate('Home');
+      navigation.replace('MainTabs', { screen: 'Home' });
     }
   };
 

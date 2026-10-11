@@ -2,9 +2,9 @@ import { artStyleService } from '../services/ArtStyleService';
 
 describe('ArtStyleService', () => {
   describe('getAllStyles', () => {
-    it('should return all 5 art styles', () => {
+    it('should return all configured art styles', () => {
       const styles = artStyleService.getAllStyles();
-      expect(styles).toHaveLength(5);
+      expect(styles).toHaveLength(7);
     });
 
     it('should have required properties', () => {

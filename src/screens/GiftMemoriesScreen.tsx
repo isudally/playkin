@@ -94,7 +94,7 @@ export default function GiftMemoriesScreen() {
         if (daysSinceLastGift <= 7) {
           streak = 1;
           // Count consecutive weeks with gifts
-          let weekStart = new Date(lastGift);
+          const weekStart = new Date(lastGift);
           weekStart.setDate(weekStart.getDate() - 7);
           
           for (let i = 1; i < sortedSent.length; i++) {

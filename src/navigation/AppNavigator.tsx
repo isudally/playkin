@@ -29,11 +29,11 @@ import InstantGiftScreen from '../screens/InstantGiftScreen';
 import GiftMemoriesScreen from '../screens/GiftMemoriesScreen';
 
 import { useTheme } from '../contexts/ThemeContext';
-import { RootStackParamList } from '../types';
+import { MainTabParamList, RootStackParamList } from '../types';
 import { forgeColors } from '../design-tokens/theme';
 
 const Stack = createStackNavigator<RootStackParamList>();
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<MainTabParamList>();
 
 function MainTabs() {
   const { theme, isDark } = useTheme();
