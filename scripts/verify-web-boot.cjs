@@ -62,10 +62,42 @@ async function main() {
   try {
     await page.goto(url, { waitUntil: 'networkidle' });
     await page.waitForSelector('#root > *', { timeout: 10000 });
+
+    const expectText = async (text) => {
+      await page.getByText(text, { exact: true }).first().waitFor({ state: 'visible', timeout: 10000 });
+    };
+    const clickText = async (text) => {
+      await page.getByText(text, { exact: true }).first().click();
+      await page.waitForTimeout(250);
+    };
+
+    // First-time onboarding: exercise the typed nested-tab destination.
+    await page.evaluate(() => window.localStorage.clear());
+    await page.reload({ waitUntil: 'networkidle' });
+    await expectText('Welcome to GameForge! 🎮');
+    await clickText('Get Started');
+    await expectText('What do you want to build? 🎯');
+    await clickText('Full Games');
+    await clickText('Continue');
+    await expectText('Pick your style 🎨');
+    await clickText('Pixel Perfect');
+    await clickText('Continue');
+    await expectText("What's your experience level? 💪");
+    await clickText('Beginner');
+    await clickText('Start Creating!');
+    await expectText('Game Templates');
+
+    // Returning-user bypass: persisted completion opens the main shell directly.
+    await page.evaluate(() => window.localStorage.setItem('onboarding_completed', 'true'));
+    await page.reload({ waitUntil: 'networkidle' });
+    await expectText('Create a Gift');
+    await clickText('Templates');
+    await expectText('Game Templates');
+
     if (failures.length > 0) {
       throw new Error(`Browser boot reported errors:\n${failures.join('\n')}`);
     }
-    console.log(`Browser boot passed: ${url}`);
+    console.log(`Browser boot and onboarding navigation passed: ${url}`);
   } finally {
     await browser.close();
     server.close();
