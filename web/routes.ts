@@ -9,6 +9,9 @@ export function resolveWebRoute(pathname: string): WebRoute {
 
   if (normalized === '/create') return { name: 'create' };
   if (normalized === '/admin') return { name: 'admin' };
+  if (normalized.startsWith('/gift/')) {
+    return { name: 'recipient', giftId: normalized.slice('/gift/'.length) || 'missing' };
+  }
   if (normalized.startsWith('/recipient/')) {
     return { name: 'recipient', giftId: normalized.slice('/recipient/'.length) || 'preview' };
   }
