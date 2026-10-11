@@ -2,7 +2,7 @@
 
 This is the authoritative delivery status for the repository. Feature lists in older documents describe product intent or historical work; they are not release-readiness evidence.
 
-Last verified: 2026-10-11 on merged `main@fdd1c53b50d649e6d1d78783b24f0d2e2f1c3738` after PR [#3](https://github.com/isudally/playkin/pull/3), with the active `Protect main - CI required` ruleset. Phase 1B is being prepared on `phase1b/first-complete-gift`; production deployment remains deferred.
+Last verified: 2026-10-11 on merged `main@fdd1c53b50d649e6d1d78783b24f0d2e2f1c3738` after PR [#3](https://github.com/isudally/playkin/pull/3), with the active `Protect main - CI required` ruleset. Phase 1B is open as [PR #4](https://github.com/isudally/playkin/pull/4) on `phase1b/first-complete-gift`; production deployment remains deferred.
 
 ## Current status
 
@@ -51,7 +51,7 @@ Last verified: 2026-10-11 on merged `main@fdd1c53b50d649e6d1d78783b24f0d2e2f1c37
 | Privacy and abuse boundaries | PARTIAL | Creator-token authorization, recipient-token isolation, deletion, input limits, body-size limits, expiry, and rate limiting are present. Identity, moderation, audit retention, and production database controls remain follow-up work. |
 | Server-side AI | PARTIAL | The server exposes a disabled provider boundary without client credentials. Live provider integration is not implemented or claimed. |
 | Phase 1B browser evidence | VERIFIED WORKING | Chromium at 390x844 proved creator save, secure-link generation, separate browser delivery, all three game rounds, persisted completion after reload, invalid-link handling, admin navigation, and no unexpected browser errors. |
-| Phase 1B release state | READY TO REVIEW | Branch implementation is complete locally; PR creation and GitHub CI verification remain before merge. No production deployment was performed. |
+| Phase 1B release state | READY TO MERGE | PR #4 is open and mergeable with required CI and deployment-safety checks passed. No production deployment was performed. |
 
 ## Phase 0 acceptance gates
 
@@ -96,6 +96,9 @@ Last verified: 2026-10-11 on merged `main@fdd1c53b50d649e6d1d78783b24f0d2e2f1c37
 - Branch: `phase1b/first-complete-gift`, based on merged `main@fdd1c53b50d649e6d1d78783b24f0d2e2f1c3738`.
 - Local checks: 10 Jest suites and 90 tests passed; server persistence tests passed (2 tests); `verify:types` passed against the tracked 63-diagnostic legacy baseline; `verify:types:web` passed with zero diagnostics; ESLint passed with 0 errors and 229 legacy warnings.
 - Web export: Vite 5.4.19 produced one 160,237-byte JavaScript file; `verify:web-bundle` and `verify:client-bundle` passed.
+- GitHub CI: [run `38160075550`](https://github.com/isudally/playkin/actions/runs/38160075550) passed in 1m56s, including `npm ci`, legacy and web type checks, lint, 90 Jest tests, 2 server tests, Vite export, bundle guard, secret scan, Chromium installation, and the full Phase 1B browser journey.
+- Deployment workflow: [run `38160075496`](https://github.com/isudally/playkin/actions/runs/38160075496) passed; production and preview deployment steps were not authorized or configured, and no deployment occurred.
 - Negative control: a temporary `react-native` reference in `web-build` caused `verify:web-bundle` to fail; the fixture was removed and the clean scan passed again.
 - Runtime boundary: `npm run api:dev` serves the first-slice gift service on localhost; Vite proxies `/api` during local development. The production deployment workflow was not changed to deploy this service.
 - Remaining dependencies: production database, identity, moderation/audit policy, final Dodo/game artwork, hosted API runtime, live server-side AI, payments, uploads, and analytics.
+- PR: [#4](https://github.com/isudally/playkin/pull/4), base `main`, head `phase1b/first-complete-gift`, open and mergeable. Latest verified implementation commit: `39bfa31d450be65c94560200588de575224618c7`.
