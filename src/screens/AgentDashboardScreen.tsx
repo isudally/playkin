@@ -335,8 +335,7 @@ export const AgentDashboardScreen: React.FC = () => {
           <Text style={styles.configHintText}>
             To enable AI-powered agents, set your API keys in environment variables:
           </Text>
-          <Text style={styles.configHintCode}>GROK_API_KEY=your-key</Text>
-          <Text style={styles.configHintCode}>OPENAI_API_KEY=your-key</Text>
+           <Text style={styles.configHintCode}>Configure AI through the server runtime</Text>
         </View>
       </ScrollView>
     </LinearGradient>
