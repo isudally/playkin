@@ -12,5 +12,5 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'warn',
     'no-console': ['warn', { allow: ['warn', 'error'] }]
   },
-  ignorePatterns: ['node_modules/', 'dist/', 'build/']
+  ignorePatterns: ['node_modules/', 'dist/', 'build/', 'web-build/', 'web/vite.config.ts']
 };
