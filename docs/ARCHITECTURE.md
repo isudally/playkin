@@ -1,5 +1,7 @@
 # System Architecture & Vision
 
+> **Status note:** This document describes the product vision and historical architecture. For verified implementation status, use [`docs/STATUS.md`](STATUS.md) and [`docs/DECISIONS.md`](DECISIONS.md).
+
 ## Overview
 
 This document outlines the current GameForge Mobile architecture and the roadmap toward the full vision of an AI-powered, agent-orchestrated game creation platform.

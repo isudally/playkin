@@ -2,6 +2,7 @@
  * AIService Tests
  */
 import aiService from '../services/AIService';
+import { grokService } from '../services/GrokService';
 
 // Mock GrokService
 jest.mock('../services/GrokService', () => ({
@@ -11,6 +12,10 @@ jest.mock('../services/GrokService', () => ({
 }));
 
 describe('AIService', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('generateGiftMessage', () => {
     it('generates a gift message', async () => {
       const message = await aiService.generateGiftMessage(
@@ -39,6 +44,7 @@ describe('AIService', () => {
     it('returns fallback message on error', async () => {
       const mockError = new Error('API error');
       jest.spyOn(console, 'error').mockImplementation(() => {});
+      (grokService.chat as jest.Mock).mockRejectedValueOnce(mockError);
       
       // This will use the fallback since mock might fail
       const message = await aiService.generateGiftMessage(
@@ -66,6 +72,7 @@ describe('AIService', () => {
     });
 
     it('returns fallback suggestions on error', async () => {
+      (grokService.chat as jest.Mock).mockRejectedValueOnce(new Error('API error'));
       const suggestions = await aiService.generateSuggestions(
         'themes',
         'test',
@@ -87,6 +94,7 @@ describe('AIService', () => {
     });
 
     it('returns original text on error', async () => {
+      (grokService.chat as jest.Mock).mockRejectedValueOnce(new Error('API error'));
       const originalText = 'This is a test';
       const enhanced = await aiService.enhanceText(originalText, 'simplify');
       

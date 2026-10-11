@@ -1,8 +1,8 @@
 /**
- * OpenAIService - OpenAI API integration for GameForge
- * Provides AI-powered game content generation, gift messages, and personalization
- * 
- * Uses the OPENAI_API_KEY environment variable for authentication
+ * OpenAIService - legacy client compatibility layer.
+ *
+ * Provider calls are intentionally disabled in the client. AI generation will
+ * move behind the Phase 1 server boundary.
  */
 
 import {
@@ -51,41 +51,18 @@ export interface GiftGameGenerationResult {
 
 class OpenAIService {
   private apiKey: string = '';
-  private baseUrl: string = 'https://api.openai.com/v1';
   private model: string = 'gpt-4o-mini'; // Cost-effective model for most tasks
   private isConfigured: boolean = false;
 
-  constructor() {
-    // Try to load API key from environment
-    this.loadFromEnvironment();
-  }
-
   /**
-   * Load API key from environment variables
-   */
-  private loadFromEnvironment(): void {
-    // Check various environment variable formats
-    const apiKey = 
-      process.env.OPENAI_API_KEY ||
-      process.env.EXPO_PUBLIC_OPENAI_API_KEY ||
-      process.env.REACT_APP_OPENAI_API_KEY ||
-      '';
-    
-    if (apiKey) {
-      this.configure({ apiKey });
-    }
-  }
-
-  /**
-   * Configure the OpenAI service
+   * Legacy compatibility method. Secrets are deliberately not retained by
+   * the client; configure the Phase 1 server instead.
    */
   configure(config: OpenAIConfig): void {
-    this.apiKey = config.apiKey;
+    void config.apiKey;
     if (config.model) this.model = config.model;
-    if (config.baseUrl) this.baseUrl = config.baseUrl;
-    this.isConfigured = !!this.apiKey;
-    
-    // Service configured - ready for use
+    this.apiKey = '';
+    this.isConfigured = false;
   }
 
   /**
@@ -113,65 +90,12 @@ class OpenAIService {
       responseFormat?: 'text' | 'json_object';
     }
   ): Promise<OpenAIResponse> {
-    if (!this.isReady()) {
-      return {
-        success: false,
-        error: 'OpenAI API key not configured',
-      };
-    }
-
-    try {
-      const requestBody: any = {
-        model: this.model,
-        messages,
-        temperature: options?.temperature ?? 0.7,
-        max_tokens: options?.maxTokens ?? 2000,
-      };
-
-      // Add response format if JSON is requested
-      if (options?.responseFormat === 'json_object') {
-        requestBody.response_format = { type: 'json_object' };
-      }
-
-      const response = await fetch(`${this.baseUrl}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('OpenAI API error:', errorText);
-        return {
-          success: false,
-          error: `API error: ${response.status} - ${response.statusText}`,
-        };
-      }
-
-      const data = await response.json();
-      const content = data.choices?.[0]?.message?.content;
-
-      if (!content) {
-        return {
-          success: false,
-          error: 'No response content from OpenAI',
-        };
-      }
-
-      return {
-        success: true,
-        content,
-      };
-    } catch (error) {
-      console.error('OpenAI chat error:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-      };
-    }
+    void messages;
+    void options;
+    return {
+      success: false,
+      error: 'Server-side AI is not configured in the client',
+    };
   }
 
   /**

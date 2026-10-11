@@ -38,10 +38,6 @@
           }
         }
       ]
-    ],
-    "extra": {
-      "openaiApiKey": "${EXPO_PUBLIC_OPENAI_API_KEY}",
-      "grokApiKey": "${EXPO_PUBLIC_GROK_API_KEY}"
-    }
+    ]
   }
 }

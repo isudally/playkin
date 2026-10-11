@@ -7,12 +7,23 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      deploy_production:
+        description: Explicitly authorize a production Vercel deployment
+        required: true
+        default: false
+        type: boolean
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     
     steps:
       - name: Checkout code
@@ -21,7 +32,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: Install dependencies
@@ -33,7 +44,8 @@ jobs:
           NODE_OPTIONS: '--max-old-space-size=4096'
 
       - name: Deploy to Vercel (Production)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        # Production deployment is manually authorized during the migration.
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy_production == true
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -43,7 +55,8 @@ jobs:
           vercel-args: '--prod'
 
       - name: Deploy to Vercel (Preview)
-        if: github.event_name == 'pull_request'
+        # Preview deployment is optional until the repository is connected to Vercel.
+        if: github.event_name == 'pull_request' && env.VERCEL_TOKEN != '' && env.VERCEL_ORG_ID != '' && env.VERCEL_PROJECT_ID != ''
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}

@@ -76,7 +76,6 @@ export const createGlassStyle = (
   if (Platform.OS === 'web') {
     return {
       ...baseStyle,
-      // @ts-ignore - backdrop-filter is web-only
       backdropFilter: config.backdropFilter,
       WebkitBackdropFilter: config.backdropFilter, // Safari support
     } as ViewStyle;

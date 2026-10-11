@@ -1,8 +1,9 @@
 /**
- * GrokService - Personalized game generation using Grok API (x.ai) or OpenAI
- * OpenAI-compatible API interface for generating personalized gift games
- * 
- * Supports both Grok (x.ai) and OpenAI APIs with automatic fallback
+ * GrokService - Local safety validation and legacy fallback generation.
+ *
+ * Provider calls intentionally do not happen in the client. AI provider
+ * credentials belong behind the Phase 1 server boundary and must never be
+ * read from an Expo bundle.
  */
 
 import {
@@ -46,70 +47,43 @@ const UNSAFE_NAMES = [
   'osama', 'bin laden', 'isis', 'al qaeda',
 ];
 
-// API Provider type
-type APIProvider = 'grok' | 'openai';
-
 class GrokService {
-  private apiKey: string;
-  private openaiApiKey: string;
-  private baseUrl: string = 'https://api.x.ai/v1/chat/completions';
-  private openaiBaseUrl: string = 'https://api.openai.com/v1/chat/completions';
-  private model: string = 'grok-beta';
-  private openaiModel: string = 'gpt-4o-mini';
-  private preferredProvider: APIProvider = 'openai'; // Default to OpenAI for reliability
-
-  constructor() {
-    // Load API keys from environment
-    this.apiKey = process.env.GROK_API_KEY || process.env.EXPO_PUBLIC_GROK_API_KEY || '';
-    this.openaiApiKey = process.env.OPENAI_API_KEY || process.env.EXPO_PUBLIC_OPENAI_API_KEY || '';
-    
-    // Auto-detect preferred provider based on available keys
-    if (this.openaiApiKey) {
-      this.preferredProvider = 'openai';
-    } else if (this.apiKey) {
-      this.preferredProvider = 'grok';
-    }
-    // If no API key configured, fallback generation will be used
-  }
-
   /**
-   * Check if any AI API is available
+   * Provider AI is not available in the client runtime.
+   *
+   * This remains as a compatibility method for legacy screens while the
+   * server-side AI endpoint is implemented in Phase 1.
    */
   isAIEnabled(): boolean {
-    return !!(this.apiKey || this.openaiApiKey);
+    return false;
   }
 
   /**
    * Get the active provider name
    */
   getActiveProvider(): string {
-    if (this.openaiApiKey && this.preferredProvider === 'openai') return 'OpenAI';
-    if (this.apiKey) return 'Grok';
     return 'Fallback (No API)';
   }
 
   /**
-   * Set API key for Grok service
+   * @deprecated Provider keys must never be supplied to client code.
    */
   setApiKey(key: string): void {
-    this.apiKey = key;
+    void key;
   }
 
   /**
-   * Set OpenAI API key
+   * @deprecated Provider keys must never be supplied to client code.
    */
   setOpenAIKey(key: string): void {
-    this.openaiApiKey = key;
-    if (key) {
-      this.preferredProvider = 'openai';
-    }
+    void key;
   }
 
   /**
-   * Set preferred AI provider
+   * @deprecated Provider selection belongs to the server runtime.
    */
-  setPreferredProvider(provider: APIProvider): void {
-    this.preferredProvider = provider;
+  setPreferredProvider(provider: 'grok' | 'openai'): void {
+    void provider;
   }
 
   /**
@@ -245,112 +219,18 @@ Respond ONLY with the JSON, no additional text.`;
   }
 
   /**
-   * Generic chat method for AI interactions - supports both OpenAI and Grok
+   * Legacy chat entry point. Server-backed AI will replace this in Phase 1.
    */
   async chat(prompt: string): Promise<string> {
-    // Try OpenAI first if available and preferred
-    if (this.openaiApiKey && this.preferredProvider === 'openai') {
-      try {
-        return await this.chatWithOpenAI(prompt);
-      } catch (error) {
-        console.warn('OpenAI API failed, trying fallback:', error);
-        // Fall through to try Grok
-      }
-    }
-
-    // Try Grok if available
-    if (this.apiKey) {
-      try {
-        return await this.chatWithGrok(prompt);
-      } catch (error) {
-        console.warn('Grok API failed:', error);
-      }
-    }
-
-    // No API available, return fallback
+    void prompt;
     return 'AI response generated locally';
   }
 
   /**
-   * Chat with OpenAI API
-   */
-  private async chatWithOpenAI(prompt: string): Promise<string> {
-    const response = await fetch(this.openaiBaseUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.openaiApiKey}`,
-      },
-      body: JSON.stringify({
-        model: this.openaiModel,
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a helpful and creative AI assistant specializing in personalized gift experiences.',
-          },
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
-        temperature: 0.8,
-        max_tokens: 1500,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('OpenAI API error:', errorText);
-      throw new Error(`OpenAI API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
-    
-    if (!content) throw new Error('No response from OpenAI');
-    return content;
-  }
-
-  /**
-   * Chat with Grok API
-   */
-  private async chatWithGrok(prompt: string): Promise<string> {
-    const response = await fetch(this.baseUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: this.model,
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a helpful and creative AI assistant.',
-          },
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
-        temperature: 0.8,
-        max_tokens: 1000,
-      }),
-    });
-
-    if (!response.ok) {
-      console.error('Grok API error:', await response.text());
-      throw new Error('Grok API request failed');
-    }
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
-    
-    return content || 'No response generated';
-  }
-
-  /**
-   * Generate a gift game using AI (OpenAI or Grok)
+   * Generate a gift game using the safe local fallback.
+   *
+   * Remote generation is intentionally deferred until the server endpoint
+   * exists. This keeps the current client usable without embedding secrets.
    */
   async generateGame(questionnaire: GiftForgeQuestionnaire): Promise<GrokGameResponse> {
     // Safety check first
@@ -362,77 +242,7 @@ Respond ONLY with the JSON, no additional text.`;
       };
     }
 
-    // If no API key available, use fallback generation
-    if (!this.apiKey && !this.openaiApiKey) {
-      return this.generateFallbackGame(questionnaire);
-    }
-
-    try {
-      const prompt = this.buildGamePrompt(questionnaire);
-      const systemPrompt = 'You are a creative game designer specializing in personalized gift experiences. Generate heartfelt, age-appropriate, and engaging mini-game content. Always respond with valid JSON only.';
-      
-      // Determine which API to use
-      const useOpenAI = this.openaiApiKey && this.preferredProvider === 'openai';
-      const apiUrl = useOpenAI ? this.openaiBaseUrl : this.baseUrl;
-      const apiKey = useOpenAI ? this.openaiApiKey : this.apiKey;
-      const model = useOpenAI ? this.openaiModel : this.model;
-      
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: prompt },
-          ],
-          temperature: 0.8,
-          max_tokens: 2500,
-          ...(useOpenAI && { response_format: { type: 'json_object' } }),
-        }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`${useOpenAI ? 'OpenAI' : 'Grok'} API error:`, errorText);
-        // Fall back to local generation
-        return this.generateFallbackGame(questionnaire);
-      }
-
-      const data = await response.json();
-      const content = data.choices?.[0]?.message?.content;
-      
-      if (!content) {
-        return this.generateFallbackGame(questionnaire);
-      }
-
-      // Parse the JSON response
-      const gameData = JSON.parse(content);
-      
-      const game: GeneratedGiftGame = {
-        id: this.generateGameId(),
-        title: gameData.title,
-        recipientName: questionnaire.recipientName,
-        senderName: questionnaire.senderName,
-        introScreen: gameData.introScreen,
-        endScreen: gameData.endScreen,
-        gameContent: gameData.gameContent,
-        visualStyle: questionnaire.visualStyle,
-        createdAt: new Date(),
-      };
-
-      return {
-        success: true,
-        game,
-      };
-    } catch (error) {
-      console.error('Error generating game with Grok:', error);
-      // Fall back to local generation
-      return this.generateFallbackGame(questionnaire);
-    }
+    return this.generateFallbackGame(questionnaire);
   }
 
   /**

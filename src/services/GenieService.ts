@@ -6,81 +6,32 @@ interface GenieResponse {
   codeSnippet?: string;
 }
 
-// API Provider type
-type APIProvider = 'grok' | 'openai';
-
 class GenieService {
-  private apiKey: string = ''; // Grok API key
-  private openaiApiKey: string = ''; // OpenAI API key
-  private apiEndpoint: string = 'https://api.x.ai/v1/chat/completions'; // Grok API
-  private openaiEndpoint: string = 'https://api.openai.com/v1/chat/completions'; // OpenAI API
-  private model: string = 'grok-beta';
-  private openaiModel: string = 'gpt-4o-mini';
   private useRealAI: boolean = false;
-  private preferredProvider: APIProvider = 'openai';
-
-  constructor() {
-    // Try to load API keys from environment
-    this.loadFromEnvironment();
-  }
-
-  /**
-   * Load API keys from environment variables
-   */
-  private loadFromEnvironment(): void {
-    const grokKey = process.env.GROK_API_KEY || process.env.EXPO_PUBLIC_GROK_API_KEY || '';
-    const openaiKey = process.env.OPENAI_API_KEY || process.env.EXPO_PUBLIC_OPENAI_API_KEY || '';
-    
-    if (openaiKey) {
-      this.openaiApiKey = openaiKey;
-      this.preferredProvider = 'openai';
-      this.useRealAI = true;
-    }
-    
-    if (grokKey) {
-      this.apiKey = grokKey;
-      if (!openaiKey) {
-        this.preferredProvider = 'grok';
-        this.useRealAI = true;
-      }
-    }
-  }
 
   /**
    * Configure the AI service (legacy method - supports both APIs)
    */
   configure(apiKey: string, endpoint?: string, model?: string): void {
-    // Detect if it's OpenAI key (starts with 'sk-')
-    if (apiKey.startsWith('sk-')) {
-      this.openaiApiKey = apiKey;
-      this.preferredProvider = 'openai';
-      if (endpoint) this.openaiEndpoint = endpoint;
-      if (model) this.openaiModel = model;
-    } else {
-      this.apiKey = apiKey;
-      this.preferredProvider = 'grok';
-      if (endpoint) this.apiEndpoint = endpoint;
-      if (model) this.model = model;
-    }
-    this.useRealAI = !!apiKey;
+    void apiKey;
+    void endpoint;
+    void model;
+    this.useRealAI = false;
   }
 
   /**
    * Configure OpenAI specifically
    */
   configureOpenAI(apiKey: string, model?: string): void {
-    this.openaiApiKey = apiKey;
-    this.preferredProvider = 'openai';
-    if (model) this.openaiModel = model;
-    this.useRealAI = true;
+    void apiKey;
+    void model;
+    this.useRealAI = false;
   }
 
   /**
    * Get active AI provider name
    */
   getActiveProvider(): string {
-    if (this.openaiApiKey && this.preferredProvider === 'openai') return 'OpenAI';
-    if (this.apiKey) return 'Grok';
     return 'Simulation (No API)';
   }
 
@@ -88,7 +39,7 @@ class GenieService {
    * Check if real AI is enabled
    */
   isRealAIEnabled(): boolean {
-    return this.useRealAI && !!(this.apiKey || this.openaiApiKey);
+    return false;
   }
 
   /**
@@ -99,87 +50,11 @@ class GenieService {
     personality: GeniePersonality,
     context?: GenieContext
   ): Promise<GenieResponse> {
-    // Get personality-specific system prompt
-    const systemPrompt = this.getPersonalityPrompt(personality);
-    
     // Build context string
     const contextString = this.buildContextString(context);
-    
-    // Use language model API if configured, otherwise simulate
-    if (this.isRealAIEnabled()) {
-      try {
-        return await this.processWithRealAI(message, systemPrompt, contextString);
-      } catch (error) {
-        console.error('Language model API failed, falling back to simulation:', error);
-        return this.simulateResponse(message, personality, contextString);
-      }
-    }
-    
-    // Fallback to simulated responses
+
+    // Remote AI is deferred to the server boundary; keep this legacy client path deterministic.
     return this.simulateResponse(message, personality, contextString);
-  }
-
-  /**
-   * Process message with real AI API (supports both OpenAI and Grok)
-   */
-  private async processWithRealAI(
-    message: string,
-    systemPrompt: string,
-    contextString: string
-  ): Promise<GenieResponse> {
-    const fullMessage = contextString 
-      ? `Context: ${contextString}\n\nUser: ${message}`
-      : message;
-
-    // Determine which API to use
-    const useOpenAI = this.openaiApiKey && this.preferredProvider === 'openai';
-    const endpoint = useOpenAI ? this.openaiEndpoint : this.apiEndpoint;
-    const apiKey = useOpenAI ? this.openaiApiKey : this.apiKey;
-    const model = useOpenAI ? this.openaiModel : this.model;
-
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt,
-          },
-          {
-            role: 'user',
-            content: fullMessage,
-          },
-        ],
-        temperature: 0.7,
-        max_tokens: 1000,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`AI API error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
-    
-    if (!content) {
-      throw new Error('No response from AI');
-    }
-
-    // Parse response and extract suggestions if present
-    const suggestions = this.extractSuggestions(content);
-    const codeSnippet = this.extractCodeSnippet(content);
-
-    return {
-      content: content.replace(/```[\s\S]*?```/g, '').trim(),
-      suggestions,
-      codeSnippet,
-    };
   }
 
   /**

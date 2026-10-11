@@ -1,7 +1,16 @@
+import type { NavigatorScreenParams } from '@react-navigation/native';
+
 // Navigation types
+export type MainTabParamList = {
+  Home: undefined;
+  Projects: undefined;
+  Templates: undefined;
+  Genie: undefined;
+};
+
 export type RootStackParamList = {
   Onboarding: undefined;
-  MainTabs: undefined;
+  MainTabs: NavigatorScreenParams<MainTabParamList> | undefined;
   Home: undefined;
   Projects: undefined;
   ProjectList: undefined;

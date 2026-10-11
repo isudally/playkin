@@ -210,7 +210,7 @@ export default function ForgeCard({
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        // @ts-ignore - Web-specific props
+        // @ts-expect-error Web-specific props are not in React Native's shared type.
         onMouseEnter={Platform.OS === 'web' ? handleHoverIn : undefined}
         onMouseLeave={Platform.OS === 'web' ? handleHoverOut : undefined}
         activeOpacity={1}
@@ -224,7 +224,7 @@ export default function ForgeCard({
   return (
     <Animated.View 
       style={[cardStyle, containerStyle]}
-      // @ts-ignore - Web-specific props
+      // @ts-expect-error Web-specific props are not in React Native's shared type.
       onMouseEnter={Platform.OS === 'web' ? handleHoverIn : undefined}
       onMouseLeave={Platform.OS === 'web' ? handleHoverOut : undefined}
     >
