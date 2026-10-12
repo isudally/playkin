@@ -60,7 +60,7 @@ Last verified: 2026-10-12 on `phase1c/product-quality` based on merged `main@842
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Branch | PARTIAL | `phase1c/product-quality`, based on merged `main@842965a`; PR is opened only after the local verification set is complete. |
+| Branch | PARTIAL | `phase1c/product-quality`, based on merged `main@842965a`; [PR #5](https://github.com/isudally/playkin/pull/5) is open with local verification complete and GitHub checks pending. |
 | Creator recovery | PARTIAL | The creator form and authorization token recover after refresh in the same browser tab through `sessionStorage`. Cross-device recovery is intentionally deferred until account identity exists; the token is not moved to persistent browser storage. |
 | Creator management | VERIFIED WORKING | Creator updates use an authenticated `PATCH` path; deletion remains available; status distinguishes passive link opens, interaction, and completion. |
 | Republish integrity | VERIFIED WORKING | Republishing rotates the recipient token without regressing a completed gift to `published`; creator updates preserve completion state. |

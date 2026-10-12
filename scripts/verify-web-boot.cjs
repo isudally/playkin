@@ -165,7 +165,7 @@ async function main() {
     if (failures.length > 0) {
       throw new Error(`Browser boot reported errors:\n${failures.join('\n')}`);
     }
-    console.log(`Phase 1B browser gift journey passed: ${url}`);
+    console.log(`Phase 1C browser gift journey passed: ${url}`);
   } finally {
     await browser.close();
     server.close();
