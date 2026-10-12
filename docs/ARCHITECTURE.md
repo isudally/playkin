@@ -1,3 +1,5 @@
+> **ARCHIVED REFERENCE — This document describes legacy GameForge or earlier Playkin architecture and is not authoritative for current implementation or the target product vision.** See [Product Vision](../PRODUCT_INTENT.md), [Creative Direction](CREATIVE_DIRECTION.md) and [Documentation Guide](DOCUMENTATION_INDEX.md).
+
 # System Architecture & Vision
 
 > **Status note:** This document describes the product vision and historical architecture. For verified implementation status, use [`docs/STATUS.md`](STATUS.md) and [`docs/DECISIONS.md`](DECISIONS.md).
