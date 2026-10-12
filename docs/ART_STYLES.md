@@ -1,3 +1,5 @@
+> **HISTORICAL ART-STYLE IDEAS — The five listed styles are older design concepts, not five finished production-ready Playkin game worlds.** See [Product Vision](../PRODUCT_INTENT.md), [Creative Direction](CREATIVE_DIRECTION.md) and [Documentation Guide](DOCUMENTATION_INDEX.md).
+
 # Art Styles Guide
 
 GameForge includes 5 signature art styles, each with complete color palettes, shaders, and filters.
