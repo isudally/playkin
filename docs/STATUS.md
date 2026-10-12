@@ -2,7 +2,7 @@
 
 This is the authoritative delivery status for the repository. Feature lists in older documents describe product intent or historical work; they are not release-readiness evidence.
 
-Last verified: 2026-10-12 on `phase1c/product-quality` based on merged `main@842965a586041a020108953fb8d59cecee191f0c`, with the active `Protect main - CI required` ruleset. Phase 1C verification is local until its pull request checks complete. Production deployment remains deferred.
+Last verified: 2026-10-12 on `phase1c/product-quality@95e0e4252bda4cf6a049c7d78f4f3adc5f32fc33` for open [PR #5](https://github.com/isudally/playkin/pull/5), based on merged `main@842965a586041a020108953fb8d59cecee191f0c`, with the active `Protect main - CI required` ruleset. GitHub verification passed; production deployment remains deferred.
 
 ## Current status
 
@@ -69,7 +69,7 @@ Last verified: 2026-10-12 on `phase1c/product-quality` based on merged `main@842
 | Storage evolution | PARTIAL | The JSON adapter now records schema version 1, accepts the unversioned migration shape, rejects unsupported or malformed records, and fails closed. A durable production database and migration runner remain deferred. |
 | Interactive experience | PARTIAL | Memory Trail now has answer feedback, explicit progression, score feedback, a completion reveal, lightweight audio, and motion states. It remains a development vertical slice with temporary artwork, not a commercial catalogue experience. |
 | Runtime evidence | VERIFIED WORKING | Local web types, server tests, production build, bundle guard, client-secret scan, and real Chromium at 390x844 passed. GitHub PR checks are required before merge. |
-| Release boundary | NOT READY TO MERGE | This branch must still pass its GitHub checks. No production deployment, payment, live AI, hosted database, identity, or Phase 1C merge is claimed. |
+| Release boundary | READY TO MERGE | PR #5 is open and mergeable; local and GitHub verification passed. No production deployment, payment, live AI, hosted database, identity, or Phase 1C merge is claimed. |
 
 ## Phase 0 acceptance gates
 
@@ -141,3 +141,14 @@ Last verified: 2026-10-12 on `phase1c/product-quality` based on merged `main@842
 - Post-merge CI: [run `38207099971`](https://github.com/isudally/playkin/actions/runs/38207099971), required job `114672897582`, passed. It completed dependency installation, lint, Jest, server tests, type checks, web build, bundle scans, Chromium, and browser boot.
 - Post-merge deployment workflow: [run `38207099975`](https://github.com/isudally/playkin/actions/runs/38207099975), job `114672897185`, passed with production and preview deployment steps skipped. No unauthorized deployment occurred.
 - Phase 1C starts from this verified merge and does not alter production configuration.
+
+## Phase 1C verification record
+
+- Branch: `phase1c/product-quality`, based on merged `main@842965a586041a020108953fb8d59cecee191f0c`.
+- PR: [#5](https://github.com/isudally/playkin/pull/5), open and mergeable. Verified implementation head before this status-only record: `95e0e4252bda4cf6a049c7d78f4f3adc5f32fc33`.
+- GitHub CI: [run `38208468349`](https://github.com/isudally/playkin/actions/runs/38208468349), job `114677106449`, passed in 1m28s. It completed `npm ci`, ESLint, 90 Jest tests, 7 server tests, tracked legacy TypeScript verification, independent web TypeScript verification, Vite build, bundle guard, client-secret scan, Chromium installation, and browser boot.
+- Deployment safety: [run `38208468371`](https://github.com/isudally/playkin/actions/runs/38208468371), job `114677106386`, passed in 48s. Production and preview deployment steps were skipped; no deployment occurred.
+- Local runtime evidence: real Chromium at 390x844 passed creator refresh recovery, separate-browser delivery, three-round play, interaction/completion status, server-confirmed reveal, completion reload, creator deletion, invalid-link handling, admin navigation, and no unexpected page or console errors.
+- Local product checks: 10 Jest suites / 90 tests, 7 server tests, web type check with zero diagnostics, legacy baseline at exactly 63 diagnostics, lint with 0 errors / 228 warnings, 164,883 raw JavaScript bytes, bundle guard, and client secret scan all passed.
+- Negative controls: a reduced legacy type baseline and a provider-key fixture each caused their relevant check to fail; both were removed and clean checks passed again.
+- Status: READY TO MERGE as a development milestone. This is not a commercial launch or production-readiness claim.
