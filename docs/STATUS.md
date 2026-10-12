@@ -8,7 +8,7 @@ Last verified: 2026-10-12 on merged `main@cdd405b2acf4b7bc2642c03e58f9f365deb1d6
 
 **Product vision:** Playkin is a **multi-game personalised gifting platform**. Dodo's Lantern Trail is Game #1 and a development reference, not the entire product. See [Product Vision](../PRODUCT_INTENT.md) and [Creative Direction](CREATIVE_DIRECTION.md).
 
-**Current technical baseline:** Verified browser-native Vite application, local gift service, encrypted-by-hash opaque gift tokens, sender/recipient journey, five direct interaction mechanics, replay, first-write-wins completion, deletion/expiry safeguards, and CI/browser evidence. The current backend uses a versioned **local JSON file**, not hosted durable production persistence.
+**Current technical baseline:** Verified browser-native Vite application, local gift service, hashed opaque gift tokens, sender/recipient journey, five direct interaction mechanics, replay, first-write-wins completion, deletion/expiry safeguards, and CI/browser evidence. The current backend uses a versioned **local JSON file**, not hosted durable production persistence.
 
 **Not yet commercial-ready:** multiple purchasable game offerings, deeper age/interest personalization and varied content, final high-quality production art/audio, payments, durable hosted data, real customer identity, moderation/consent safeguards, operational analytics, tamper-resistant gameplay and production hosting. A successful CI run is not evidence of buyer willingness to pay or finished creative quality.
 
