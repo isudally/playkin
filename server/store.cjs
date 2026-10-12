@@ -226,7 +226,7 @@ class GiftStore {
   }
 
   recipientView(gift) {
-    return { id: gift.id, recipientName: gift.recipientName, senderName: gift.senderName, message: gift.message, occasion: gift.occasion, themeId: gift.themeId, expiresAt: gift.recipientTokenExpiresAt, status: gift.status, progress: gift.progress, openedAt: gift.openedAt, interactedAt: gift.interactedAt, completion: gift.completion };
+    return { id: gift.id, recipientName: gift.recipientName, senderName: gift.senderName, message: gift.completion ? gift.message : null, occasion: gift.occasion, themeId: gift.themeId, expiresAt: gift.recipientTokenExpiresAt, status: gift.status, progress: gift.progress, openedAt: gift.openedAt, interactedAt: gift.interactedAt, completion: gift.completion };
   }
 }
 

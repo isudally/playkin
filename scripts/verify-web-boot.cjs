@@ -72,6 +72,12 @@ async function main() {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
   await page.setViewportSize({ width: 390, height: 844 });
+  const evidenceDirectory = process.env.PLAYKIN_EVIDENCE_DIRECTORY ? path.resolve(process.env.PLAYKIN_EVIDENCE_DIRECTORY) : null;
+  const captureEvidence = async (targetPage, filename) => {
+    if (!evidenceDirectory) return;
+    fs.mkdirSync(evidenceDirectory, { recursive: true });
+    await targetPage.screenshot({ path: path.join(evidenceDirectory, filename), fullPage: false });
+  };
   const failures = [];
   let expectingInvalidLink = false;
 
@@ -130,16 +136,37 @@ async function main() {
     await recipientPage.setViewportSize({ width: 390, height: 844 });
     await recipientPage.goto(recipientUrl, { waitUntil: 'networkidle' });
     await recipientPage.getByText('A little world, made for Ari.', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
-    await recipientPage.getByRole('button', { name: 'Begin the trail' }).click();
+    if (await recipientPage.getByText('A small world made just for you.', { exact: true }).count() > 0) throw new Error('Recipient message was exposed before completion.');
+    await captureEvidence(recipientPage, '01-opening-mobile.png');
+    const desktopContext = await browser.newContext({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce' });
+    const desktopPage = await desktopContext.newPage();
+    await desktopPage.goto(recipientUrl, { waitUntil: 'networkidle' });
+    await desktopPage.getByRole('button', { name: 'Wake the lantern' }).waitFor({ state: 'visible', timeout: 10000 });
+    const motionDuration = await desktopPage.locator('.scene-dodo-art').evaluate((element) => getComputedStyle(element).animationDuration);
+    if (motionDuration !== '0.01ms' && motionDuration !== '1e-05s') throw new Error(`Reduced-motion override was not applied: ${motionDuration}`);
+    await captureEvidence(desktopPage, '01-opening-desktop-reduced-motion.png');
+    await desktopContext.close();
+    await recipientPage.getByRole('button', { name: 'Wake the lantern' }).click();
+    await recipientPage.getByRole('button', { name: 'Sound on' }).click();
+    await recipientPage.getByRole('button', { name: 'Sound off' }).waitFor({ state: 'visible', timeout: 10000 });
     await recipientPage.getByRole('button', { name: 'Birthday' }).click();
-    await recipientPage.getByRole('button', { name: 'Carry the spark onward' }).click();
+    await captureEvidence(recipientPage, '02-interactive-stage-mobile.png');
+    await recipientPage.getByRole('button', { name: 'Carry the lantern onward' }).click();
     await recipientPage.getByRole('button', { name: 'Ismael' }).click();
-    await recipientPage.getByRole('button', { name: 'Carry the spark onward' }).click();
+    await recipientPage.getByRole('button', { name: 'Carry the lantern onward' }).click();
+    await captureEvidence(recipientPage, '03-progression-mobile.png');
     await recipientPage.getByRole('button', { name: 'A little piece of this moment' }).click();
-    await recipientPage.getByRole('button', { name: 'Reveal the message' }).click();
-    await recipientPage.getByText('JOURNEY COMPLETE', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await recipientPage.getByRole('button', { name: 'Carry the lantern onward' }).click();
+    await recipientPage.getByRole('button', { name: 'A message meant only for you' }).click();
+    await recipientPage.getByRole('button', { name: 'Carry the lantern onward' }).click();
+    await recipientPage.getByRole('button', { name: 'Here, with me' }).click();
+    await recipientPage.getByRole('button', { name: 'Open the final star' }).click();
+    await recipientPage.getByText('THE LANTERN IS YOURS', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await recipientPage.getByText('A small world made just for you.', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await captureEvidence(recipientPage, '04-personalized-reveal-mobile.png');
     await recipientPage.reload({ waitUntil: 'networkidle' });
-    await recipientPage.getByText('JOURNEY COMPLETE', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await recipientPage.getByText('THE LANTERN IS YOURS', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await captureEvidence(recipientPage, '05-completion-replay-mobile.png');
     await recipientContext.close();
     if (recipientFailures.length > 0) throw new Error(`Recipient browser reported errors:\n${recipientFailures.join('\n')}`);
 
@@ -165,7 +192,7 @@ async function main() {
     if (failures.length > 0) {
       throw new Error(`Browser boot reported errors:\n${failures.join('\n')}`);
     }
-    console.log(`Phase 1C browser gift journey passed: ${url}`);
+    console.log(`Phase 1D browser gift journey passed: ${url}`);
   } finally {
     await browser.close();
     server.close();
