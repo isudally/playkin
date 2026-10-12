@@ -14,12 +14,14 @@ test('persists a gift, records its first open, and makes completion first-write-
   assert.equal(opened.gift.senderName, 'Ismael');
   assert.ok(opened.gift.openedAt);
   assert.equal(opened.gift.interactedAt, null);
+  assert.equal(opened.gift.message, null);
   assert.equal(opened.gift.creatorToken, undefined);
   assert.ok(store.creatorView(store.authorizeCreator(created.gift.id, created.creatorToken)).openedAt);
   store.recordEvent(published.recipientToken, { type: 'progress', progress: 0.25 });
   assert.ok(store.creatorView(store.authorizeCreator(created.gift.id, created.creatorToken)).interactedAt);
   const completed = store.recordEvent(published.recipientToken, { type: 'completed', score: 275 });
   assert.equal(completed.gift.status, 'completed');
+  assert.equal(completed.gift.message, 'A small world made for you.');
   const completedAt = completed.gift.completion.completedAt;
   await new Promise((resolve) => setTimeout(resolve, 5));
   const repeated = store.recordEvent(published.recipientToken, { type: 'completed', score: 999 });

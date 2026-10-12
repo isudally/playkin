@@ -2,7 +2,7 @@
 
 This is the authoritative delivery status for the repository. Feature lists in older documents describe product intent or historical work; they are not release-readiness evidence.
 
-Last verified: 2026-10-12 on open [PR #5](https://github.com/isudally/playkin/pull/5) from `phase1c/product-quality`, based on merged `main@842965a586041a020108953fb8d59cecee191f0c`, with the active `Protect main - CI required` ruleset. GitHub verification passed; production deployment remains deferred.
+Last verified: 2026-10-12 on [PR #6](https://github.com/isudally/playkin/pull/6), head `b7523be83f1eb626001a861a47d61bea3ad7ee70`, based on merged `main@399d402a397befca0f53938331380ccc3cc9c5a3`, with the active `Protect main - CI required` ruleset. Local and GitHub corrective verification passed; the PR remains open and production deployment remains deferred.
 
 ## Current status
 
@@ -60,7 +60,7 @@ Last verified: 2026-10-12 on open [PR #5](https://github.com/isudally/playkin/pu
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Branch | PARTIAL | `phase1c/product-quality`, based on merged `main@842965a`; [PR #5](https://github.com/isudally/playkin/pull/5) is open with local verification complete and GitHub checks pending. |
+| Branch | VERIFIED WORKING | `phase1c/product-quality` was merged into `main` at `399d402a397befca0f53938331380ccc3cc9c5a3`; Phase 1D starts from that verified baseline. |
 | Creator recovery | PARTIAL | The creator form and authorization token recover after refresh in the same browser tab through `sessionStorage`. Cross-device recovery is intentionally deferred until account identity exists; the token is not moved to persistent browser storage. |
 | Creator management | VERIFIED WORKING | Creator updates use an authenticated `PATCH` path; deletion remains available; status distinguishes passive link opens, interaction, and completion. |
 | Republish integrity | VERIFIED WORKING | Republishing rotates the recipient token without regressing a completed gift to `published`; creator updates preserve completion state. |
@@ -151,4 +151,23 @@ Last verified: 2026-10-12 on open [PR #5](https://github.com/isudally/playkin/pu
 - Local runtime evidence: real Chromium at 390x844 passed creator refresh recovery, separate-browser delivery, three-round play, interaction/completion status, server-confirmed reveal, completion reload, creator deletion, invalid-link handling, admin navigation, and no unexpected page or console errors.
 - Local product checks: 10 Jest suites / 90 tests, 7 server tests, web type check with zero diagnostics, legacy baseline at exactly 63 diagnostics, lint with 0 errors / 228 warnings, 164,883 raw JavaScript bytes, bundle guard, and client secret scan all passed.
 - Negative controls: a reduced legacy type baseline and a provider-key fixture each caused their relevant check to fail; both were removed and clean checks passed again.
-- Status: READY TO MERGE as a development milestone. This is not a commercial launch or production-readiness claim.
+- Status: MERGED and verified as a development milestone. This is not a commercial launch or production-readiness claim.
+
+## Phase 1D flagship experience
+
+| Area | Status | Evidence / boundary |
+| --- | --- | --- |
+| Branch | VERIFIED WORKING | `phase1d/flagship-experience`, based on `main@399d402a397befca0f53938331380ccc3cc9c5a3`; [PR #6](https://github.com/isudally/playkin/pull/6) is open at `b7523be83f1eb626001a861a47d61bea3ad7ee70`. |
+| Recipient shell | VERIFIED WORKING | Recipient links open an immersive route without ordinary Playkin navigation or Admin controls. The invalid-link state remains explicitly handled. |
+| Flagship mechanics | VERIFIED WORKING | Dodo's Lantern Trail now uses five distinct scene-led mechanics: discover hidden sparks, aim the lantern beam, trace a path in order, collect keepsakes, and assemble the final star. At least three stages require direct scene interaction rather than text answers. |
+| Meaningful progression | VERIFIED WORKING | Each completed stage increases sparks and lantern power; the scene changes through brighter sky, path, stars, hills, and final lantern treatment. The module remains host-controlled and DOM/React-based. |
+| Personalisation | VERIFIED WORKING | Recipient and sender names, occasion, theme, and sender message shape the opening copy, trail context, visual treatment, and protected finale. Interest and age configuration remain deferred. |
+| Dodo asset | VERIFIED DOCUMENTED | `web/public/dodo-lantern-companion.png` is an original development illustration generated for this branch and used as the central scene character. Final brand art direction, licensing, and a broader asset pack remain commercial dependencies. |
+| Replayability | VERIFIED WORKING | `Play the trail again` resets the interactive module without changing the persisted completion record; the browser verifier proves replay before and after reload. Deterministic content variation is intentionally deferred. |
+| Message protection | VERIFIED WORKING | The recipient response withholds the sender message until the server confirms completion. Client-reported gameplay remains a development claim, not tamper-proof verification. |
+| Local verification | VERIFIED WORKING | Clean export and local checks passed: 93 Jest tests, 7 server tests, web type check with zero diagnostics, legacy baseline exactly 63 diagnostics, lint 0 errors / 228 warnings, Vite output 173,477 raw JavaScript bytes, web bundle guard, client secret scan, focused negative-control failure, and real Chromium at 390x844. |
+| Browser evidence | VERIFIED WORKING | `docs/evidence/phase1d/` contains opening desktop/mobile, direct interaction, progression, final reveal, replay screenshots, and a 1.7 MB Chromium `.webm` recording captured from the actual recipient journey. The verifier proved recipient navigation isolation, protected pre-completion message, five mechanics, completion persistence, deletion, invalid-link handling, reduced motion, and replay after reload without browser errors. |
+| Commercial assessment | PARTIAL | This is a stronger authored development milestone, not a sellable production gift yet. Final art/audio review, richer content variation, durable production persistence, identity, moderation, tamper-resistant gameplay, and production hosting remain launch blockers. |
+| GitHub CI | VERIFIED WORKING | [Run 38224450681](https://github.com/isudally/playkin/actions/runs/38224450681) passed on `b7523be`, including install, lint, 93 Jest tests, 7 server tests, both TypeScript checks, build, bundle guard, client scan, Chromium installation, and browser boot. |
+| Deployment safety | VERIFIED SAFE / DEFERRED | [Run 38224450679](https://github.com/isudally/playkin/actions/runs/38224450679) passed; production and preview deployment steps were skipped. No deployment occurred. |
+| Release state | READY TO MERGE | PR #6 is open and mergeable with local evidence and fresh GitHub CI green. This is a development milestone, not a commercial launch or production-readiness claim. |

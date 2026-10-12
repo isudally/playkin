@@ -8,7 +8,8 @@ export interface GiftInput {
   themeId: GiftTheme;
 }
 
-export interface GiftView extends GiftInput {
+export interface GiftView extends Omit<GiftInput, 'message'> {
+  message: string | null;
   id: string;
   createdAt?: string;
   expiresAt: string;

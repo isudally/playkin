@@ -62,3 +62,15 @@ The server distinguishes passive recipient-link opening (`openedAt`) from recipi
 The local JSON adapter now carries schema version 1, accepts the known unversioned migration shape, and fails closed on malformed records or unsupported versions. This is a migration seam for a later durable database; it is not production persistence. The first durable replacement should preserve ownership, retention, deletion, token hashing, and immutable completion invariants through integration tests before any hosted service is configured.
 
 The Memory Trail improvement adds explicit feedback and progression, score feedback, reveal gating, lightweight audio, and transition states. It remains temporary product-quality work with placeholder artwork and a small catalogue scope. Premium artwork, richer authored gameplay, identity, durable persistence, moderation, live AI, payments, uploads, and operational analytics remain launch dependencies.
+
+## Phase 1D flagship experience
+
+The corrective implementation keeps the existing Vite runtime, server gift APIs, protected reveal, and DOM/React GameModule contract. It does not introduce a game engine or change host ownership of gift identity, token access, persistence, completion, accessibility, or analytics boundaries.
+
+Dodo's Lantern Trail is now a scene-led five-stage adventure rather than a sequence of multiple-choice questions. The recipient discovers hidden sparks, aims a lantern beam, traces a path in order, gathers keepsakes, and assembles the final star. Stage completion increases sparks and lantern power, while the layered scene changes its sky, path, hills, stars, and lantern treatment. Pause/resume, teardown, structured progress, and completion events remain module responsibilities; the host continues to persist the completion.
+
+The recipient route is an immersive boundary with no ordinary application navigation or Admin link. The Dodo-with-lantern illustration is prominent within the scene rather than a decorative thumbnail. The finale brings Dodo and the fully lit scene back alongside the protected personalized message. A real `Play the trail again` action resets the module without overwriting the persisted completion record, and browser evidence covers replay after reload.
+
+The visual direction remains a night-time lantern adventure with deep indigo, warm amber, coral, and lavender accents; responsive mobile-first layout; reduced-motion support; and an explicit sound control. `web/public/dodo-lantern-companion.png` is an original development asset generated for this branch, not a third-party or franchise asset. Commercial brand approval, licensing, final art/audio, richer content variation, tamper-resistant gameplay verification, identity, durable production persistence, and production hosting remain future requirements.
+
+This correction intentionally does not add payment, live AI, customer accounts, a durable production database, branching content infrastructure, or a large catalogue. It is a stronger development milestone and should not be described as a finished commercial flagship solely because its tests pass.
