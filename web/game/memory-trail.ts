@@ -12,6 +12,7 @@ export interface MemoryTrailState {
   readonly score: number;
   readonly selectedAnswer: string | null;
   readonly lastAnswerCorrect: boolean | null;
+  readonly awaitingNext: boolean;
 }
 
 export class MemoryTrailGame implements GameModule {
@@ -27,7 +28,7 @@ export class MemoryTrailGame implements GameModule {
 
   private context: GameModuleContext | null = null;
   private listeners = new Set<(event: GameModuleEvent) => void>();
-  private state: MemoryTrailState = { status: 'ready', roundIndex: 0, score: 0, selectedAnswer: null, lastAnswerCorrect: null };
+  private state: MemoryTrailState = { status: 'ready', roundIndex: 0, score: 0, selectedAnswer: null, lastAnswerCorrect: null, awaitingNext: false };
   private rounds: MemoryTrailRound[] = [];
 
   mount(context: GameModuleContext) {
@@ -51,19 +52,27 @@ export class MemoryTrailGame implements GameModule {
   getCurrentRound() { return this.rounds[this.state.roundIndex] ?? null; }
 
   chooseAnswer(answerId: string) {
-    if (this.state.status !== 'playing') return;
+    if (this.state.status !== 'playing' || this.state.awaitingNext) return;
     const round = this.getCurrentRound();
     if (!round) return;
     const correct = round.answerId === answerId;
     const nextScore = this.state.score + (correct ? 100 : 25);
+    this.state = { ...this.state, score: nextScore, selectedAnswer: answerId, lastAnswerCorrect: correct, awaitingNext: true };
+    this.emit({ type: 'progress', moduleId: this.manifest.id, progress: (this.state.roundIndex + 1) / this.rounds.length, checkpoint: `round-${this.state.roundIndex + 1}-answered`, occurredAt: new Date().toISOString() });
+  }
+
+  continue() {
+    if (this.state.status !== 'playing' || !this.state.awaitingNext) return;
     const isLast = this.state.roundIndex === this.rounds.length - 1;
-    this.state = { ...this.state, score: nextScore, selectedAnswer: answerId, lastAnswerCorrect: correct, roundIndex: isLast ? this.state.roundIndex : this.state.roundIndex + 1, status: isLast ? 'completed' : 'playing' };
-    this.emit({ type: 'progress', moduleId: this.manifest.id, progress: isLast ? 1 : this.state.roundIndex / this.rounds.length, checkpoint: `round-${this.state.roundIndex + 1}`, occurredAt: new Date().toISOString() });
-    if (isLast) this.emit({ type: 'completed', moduleId: this.manifest.id, score: nextScore, occurredAt: new Date().toISOString() });
+    if (isLast) {
+      this.finish();
+      return;
+    }
+    this.state = { ...this.state, roundIndex: this.state.roundIndex + 1, selectedAnswer: null, lastAnswerCorrect: null, awaitingNext: false };
   }
 
   private finish() {
-    this.state = { ...this.state, status: 'completed' };
+    this.state = { ...this.state, status: 'completed', awaitingNext: false };
     this.emit({ type: 'completed', moduleId: this.manifest.id, score: this.state.score, occurredAt: new Date().toISOString() });
   }
 
