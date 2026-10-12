@@ -13,8 +13,11 @@ test('persists a gift, records its first open, and makes completion first-write-
   const opened = store.resolveRecipient(published.recipientToken);
   assert.equal(opened.gift.senderName, 'Ismael');
   assert.ok(opened.gift.openedAt);
+  assert.equal(opened.gift.interactedAt, null);
   assert.equal(opened.gift.creatorToken, undefined);
   assert.ok(store.creatorView(store.authorizeCreator(created.gift.id, created.creatorToken)).openedAt);
+  store.recordEvent(published.recipientToken, { type: 'progress', progress: 0.25 });
+  assert.ok(store.creatorView(store.authorizeCreator(created.gift.id, created.creatorToken)).interactedAt);
   const completed = store.recordEvent(published.recipientToken, { type: 'completed', score: 275 });
   assert.equal(completed.gift.status, 'completed');
   const completedAt = completed.gift.completion.completedAt;
@@ -22,6 +25,12 @@ test('persists a gift, records its first open, and makes completion first-write-
   const repeated = store.recordEvent(published.recipientToken, { type: 'completed', score: 999 });
   assert.equal(repeated.gift.completion.score, 275);
   assert.equal(repeated.gift.completion.completedAt, completedAt);
+  const republished = store.publish(created.gift.id, created.creatorToken);
+  assert.ok(republished);
+  assert.notEqual(republished.recipientToken, published.recipientToken);
+  assert.equal(republished.gift.status, 'completed');
+  assert.equal(store.resolveRecipient(republished.recipientToken).gift.status, 'completed');
+  assert.equal(store.update(created.gift.id, created.creatorToken, { recipientName: 'Ari updated', senderName: 'Ismael', message: 'Updated', occasion: 'birthday', themeId: 'golden-reunion' }).gift.status, 'completed');
   assert.equal(store.delete(created.gift.id, 'wrong-token'), false);
   assert.equal(store.delete(created.gift.id, created.creatorToken), true);
   fs.rmSync(directory, { recursive: true, force: true });
@@ -49,5 +58,16 @@ test('purges records after the defined retention window and fails closed on corr
   assert.equal(store.purgeExpired(Date.now() + 10_000), 1);
   fs.writeFileSync(filePath, '{not-json', 'utf8');
   assert.throws(() => store.create({ recipientName: 'Ari', senderName: 'Ismael', message: '', occasion: 'birthday', themeId: 'golden-reunion' }), (error) => error.code === 'STORE_CORRUPT');
+  fs.writeFileSync(filePath, JSON.stringify({ schemaVersion: 1, gifts: { broken: null } }), 'utf8');
+  assert.throws(() => store.read(), (error) => error.code === 'STORE_CORRUPT');
+  fs.rmSync(directory, { recursive: true, force: true });
+});
+
+test('migrates an unversioned store document to the current schema', () => {
+  const directory = fs.mkdtempSync(path.join(process.cwd(), '.test-playkin-migration-'));
+  const filePath = path.join(directory, 'gifts.json');
+  fs.writeFileSync(filePath, JSON.stringify({ gifts: {} }), 'utf8');
+  const store = new GiftStore(filePath);
+  assert.equal(store.read().schemaVersion, 1);
   fs.rmSync(directory, { recursive: true, force: true });
 });

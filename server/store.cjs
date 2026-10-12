@@ -6,6 +6,11 @@ const OCCASIONS = new Set(['birthday', 'anniversary', 'thank-you', 'just-because
 const THEMES = new Set(['golden-reunion', 'eternal-romance', 'creator-wave']);
 const DEFAULT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const DEFAULT_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
+const CURRENT_SCHEMA_VERSION = 1;
+
+function emptyData() {
+  return { schemaVersion: CURRENT_SCHEMA_VERSION, gifts: {} };
+}
 
 function token() {
   return crypto.randomBytes(32).toString('base64url');
@@ -47,7 +52,7 @@ class GiftStore {
 
   ensureDirectory() {
     fs.mkdirSync(path.dirname(this.filePath), { recursive: true });
-    if (!fs.existsSync(this.filePath)) this.write({ gifts: {} });
+    if (!fs.existsSync(this.filePath)) this.write(emptyData());
   }
 
   read() {
@@ -56,10 +61,17 @@ class GiftStore {
       if (!parsed || typeof parsed !== 'object' || !parsed.gifts || typeof parsed.gifts !== 'object' || Array.isArray(parsed.gifts)) {
         throw new Error('Gift storage has an invalid shape.');
       }
+      if (parsed.schemaVersion === undefined) parsed.schemaVersion = CURRENT_SCHEMA_VERSION;
+      if (parsed.schemaVersion !== CURRENT_SCHEMA_VERSION) throw new Error('Gift storage has an unsupported schema version.');
+      for (const gift of Object.values(parsed.gifts)) {
+        if (!gift || typeof gift !== 'object' || Array.isArray(gift)) throw new Error('Gift storage has an invalid gift record.');
+        gift.openedAt ??= null;
+        gift.interactedAt ??= null;
+      }
       return parsed;
     } catch (error) {
       if (error.code === 'ENOENT') return { gifts: {} };
-      if (error instanceof SyntaxError || error.message.startsWith('Gift storage has an invalid shape')) {
+      if (error instanceof SyntaxError || error.message.startsWith('Gift storage has an invalid') || error.message.startsWith('Gift storage has an unsupported schema version')) {
         const corruption = new Error('Gift storage is corrupted and must be restored before writes continue.');
         corruption.code = 'STORE_CORRUPT';
         throw corruption;
@@ -97,6 +109,7 @@ class GiftStore {
   }
 
   write(value) {
+    value.schemaVersion = CURRENT_SCHEMA_VERSION;
     const temporaryPath = `${this.filePath}.${process.pid}.tmp`;
     fs.writeFileSync(temporaryPath, JSON.stringify(value, null, 2), 'utf8');
     try {
@@ -123,6 +136,7 @@ class GiftStore {
       recipientTokenHash: null,
       recipientTokenExpiresAt: null,
       openedAt: null,
+      interactedAt: null,
       completion: null,
       progress: 0,
     };
@@ -144,10 +158,20 @@ class GiftStore {
     const recipientToken = token();
     gift.recipientTokenHash = hash(recipientToken);
     gift.recipientTokenExpiresAt = new Date(Date.now() + this.ttlMs).toISOString();
-    gift.status = 'published';
+    if (!gift.completion) gift.status = 'published';
     gift.updatedAt = new Date().toISOString();
     this.write(data);
     return { gift: this.creatorView(gift), recipientToken, expiresAt: gift.recipientTokenExpiresAt };
+  }
+
+  update(id, creatorToken, input) {
+    const data = this.read();
+    const gift = data.gifts[id];
+    if (!gift || !this.authorized(gift, creatorToken)) return null;
+    Object.assign(gift, validateGift(input));
+    gift.updatedAt = new Date().toISOString();
+    this.write(data);
+    return { gift: this.creatorView(gift) };
   }
 
   authorized(gift, creatorToken) {
@@ -174,6 +198,7 @@ class GiftStore {
     if (!found) return null;
     if (Date.parse(found.recipientTokenExpiresAt) <= Date.now()) return { expired: true };
     if (!event || !['progress', 'completed'].includes(event.type)) throw new Error('event type is invalid');
+    found.interactedAt ??= new Date().toISOString();
     if (event.type === 'progress') {
       found.progress = Math.max(found.progress, Math.min(1, Number(event.progress) || 0));
     } else {
@@ -197,12 +222,12 @@ class GiftStore {
   }
 
   creatorView(gift) {
-    return { id: gift.id, recipientName: gift.recipientName, senderName: gift.senderName, message: gift.message, occasion: gift.occasion, themeId: gift.themeId, createdAt: gift.createdAt, expiresAt: gift.expiresAt, status: gift.status, progress: gift.progress, openedAt: gift.openedAt, completion: gift.completion };
+    return { id: gift.id, recipientName: gift.recipientName, senderName: gift.senderName, message: gift.message, occasion: gift.occasion, themeId: gift.themeId, createdAt: gift.createdAt, expiresAt: gift.expiresAt, status: gift.status, progress: gift.progress, openedAt: gift.openedAt, interactedAt: gift.interactedAt, completion: gift.completion };
   }
 
   recipientView(gift) {
-    return { id: gift.id, recipientName: gift.recipientName, senderName: gift.senderName, message: gift.message, occasion: gift.occasion, themeId: gift.themeId, expiresAt: gift.recipientTokenExpiresAt, status: gift.status, progress: gift.progress, openedAt: gift.openedAt, completion: gift.completion };
+    return { id: gift.id, recipientName: gift.recipientName, senderName: gift.senderName, message: gift.message, occasion: gift.occasion, themeId: gift.themeId, expiresAt: gift.recipientTokenExpiresAt, status: gift.status, progress: gift.progress, openedAt: gift.openedAt, interactedAt: gift.interactedAt, completion: gift.completion };
   }
 }
 
-module.exports = { GiftStore, DEFAULT_TTL_MS, DEFAULT_RETENTION_MS, validateGift, hash };
+module.exports = { GiftStore, CURRENT_SCHEMA_VERSION, DEFAULT_TTL_MS, DEFAULT_RETENTION_MS, validateGift, hash };

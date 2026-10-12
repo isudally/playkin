@@ -22,6 +22,8 @@ export interface GiftRecord extends GiftDraft {
   readonly status: GiftStatus;
   readonly progress: number;
   readonly expiresAt: string;
+  readonly openedAt: string | null;
+  readonly interactedAt: string | null;
   readonly completion: GiftCompletion | null;
 }
 
@@ -53,7 +55,7 @@ export interface AnalyticsTracker {
 }
 
 export const integrationStatus = {
-  giftPersistence: 'Phase 1B local server store with validation and deletion boundary',
+  giftPersistence: 'Phase 1C versioned local server store with migration and deletion boundary',
   recipientLinks: 'Phase 1B hashed opaque expiring tokens',
   serverAi: 'Phase 1B server-only boundary, provider not configured',
   payments: 'reserved for commercial entitlement work',

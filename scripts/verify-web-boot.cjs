@@ -114,6 +114,11 @@ async function main() {
     await expectText('Your playable gift is ready.');
     const recipientUrl = await page.locator('.gift-link').getAttribute('href');
     if (!recipientUrl) throw new Error('Secure recipient link was not rendered.');
+    await page.getByText('This creator session is recoverable after refresh in this browser tab.', { exact: false }).waitFor({ state: 'visible', timeout: 10000 });
+    await page.waitForTimeout(300);
+    await page.reload({ waitUntil: 'networkidle' });
+    await expectText('Your playable gift is ready.');
+    await page.getByText('This creator session is recoverable after refresh in this browser tab.', { exact: false }).waitFor({ state: 'visible', timeout: 10000 });
 
     // Open in a separate browser context to prove cross-browser delivery.
     const recipientContext = await browser.newContext();
@@ -127,8 +132,11 @@ async function main() {
     await recipientPage.getByText('A little world, made for Ari.', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
     await recipientPage.getByRole('button', { name: 'Begin the trail' }).click();
     await recipientPage.getByRole('button', { name: 'Birthday' }).click();
+    await recipientPage.getByRole('button', { name: 'Carry the spark onward' }).click();
     await recipientPage.getByRole('button', { name: 'Ismael' }).click();
+    await recipientPage.getByRole('button', { name: 'Carry the spark onward' }).click();
     await recipientPage.getByRole('button', { name: 'A little piece of this moment' }).click();
+    await recipientPage.getByRole('button', { name: 'Reveal the message' }).click();
     await recipientPage.getByText('JOURNEY COMPLETE', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
     await recipientPage.reload({ waitUntil: 'networkidle' });
     await recipientPage.getByText('JOURNEY COMPLETE', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
@@ -136,7 +144,8 @@ async function main() {
     if (recipientFailures.length > 0) throw new Error(`Recipient browser reported errors:\n${recipientFailures.join('\n')}`);
 
     await page.getByRole('button', { name: 'Refresh status' }).click();
-    await page.getByText('Opened', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await page.getByText('Link opened', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await page.getByText('Trail started', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
     await page.getByText('Completed', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
     await page.getByRole('button', { name: 'Delete gift' }).click();
     await page.getByRole('button', { name: 'Confirm delete' }).click();
@@ -156,7 +165,7 @@ async function main() {
     if (failures.length > 0) {
       throw new Error(`Browser boot reported errors:\n${failures.join('\n')}`);
     }
-    console.log(`Phase 1B browser gift journey passed: ${url}`);
+    console.log(`Phase 1C browser gift journey passed: ${url}`);
   } finally {
     await browser.close();
     server.close();
