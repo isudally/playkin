@@ -74,3 +74,16 @@ The recipient route is an immersive boundary with no ordinary application naviga
 The visual direction remains a night-time lantern adventure with deep indigo, warm amber, coral, and lavender accents; responsive mobile-first layout; reduced-motion support; and an explicit sound control. `web/public/dodo-lantern-companion.png` is an original development asset generated for this branch, not a third-party or franchise asset. Commercial brand approval, licensing, final art/audio, richer content variation, tamper-resistant gameplay verification, identity, durable production persistence, and production hosting remain future requirements.
 
 This correction intentionally does not add payment, live AI, customer accounts, a durable production database, branching content infrastructure, or a large catalogue. It is a stronger development milestone and should not be described as a finished commercial flagship solely because its tests pass.
+
+
+## Platform product vision and external creative work — 12 October 2026
+
+The owner's approved direction is a **multi-game personalised gaming-gift platform** with exceptional graphics, meaningful personalization, genuinely engaging and replayable gameplay, a magical experience from creation through reveal, and organic sharing potential. Dodo's Lantern Trail is the first implementation reference, not the whole business. The vision must not be reduced to a single game, quiz factory or attractive digital greeting card merely for development convenience or lower outsourcing costs.
+
+[PRODUCT_INTENT.md](../PRODUCT_INTENT.md) is the authoritative product vision and [CREATIVE_DIRECTION.md](CREATIVE_DIRECTION.md) states the cross-game artistic and gameplay quality standard. [STATUS.md](STATUS.md) remains the authority on verified technical reality. The [documentation guide](DOCUMENTATION_INDEX.md) labels legacy GameForge materials as historical ideas/claims, not present release commitments.
+
+External specialists may propose art direction, game-ready environments, character animation, visual storytelling and interaction design supporting multiple games. The owner reviews the bidder shortlist and scope before any messages, awards or financial commitments. No independent freelancer has repository write access or authority to redefine the product. Source assets, reuse, performance, commercial rights and provenance must be agreed before integration.
+
+Phase 1D PR #6 merged into main at cdd405b2acf4b7bc2642c03e58f9f365deb1d660; post-merge CI and the deploy-safety workflow passed with production and preview skipped. This closes that **development milestone**, not commercial product acceptance.
+
+The repository's existing MIT licence and legacy GameForge copyright notice require a **separate owner-directed legal/provenance decision**. Documentation cleanup must not silently relicense code, revoke rights or imply exclusive ownership of third-party/generated assets.

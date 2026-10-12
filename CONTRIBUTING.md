@@ -1,191 +1,37 @@
-# Contributing to GameForge Mobile
+# Contributing to Playkin
 
-Thank you for your interest in contributing to GameForge Mobile! This document provides guidelines for contributing to the project.
+Playkin is an in-development **multi-game personalized gifting platform**. Begin with the [authoritative Product Vision](PRODUCT_INTENT.md), [Creative Direction](docs/CREATIVE_DIRECTION.md), [Verified Status](docs/STATUS.md) and [Documentation Guide](docs/DOCUMENTATION_INDEX.md).
 
-## Code of Conduct
+This repository preserves a legacy Expo/React Native codebase as migration reference; new browser product work uses the independent Vite/React app in web/. Do not infer that historical GameForge instructions, template counts or past deployment documents represent the live product.
 
-Please be respectful, inclusive, and professional in all interactions.
+## Before proposing work
 
-## Repository Structure
+- Understand the distinction between the **platform vision**, verified first game and unfinished capabilities.
+- Preserve genuinely different game mechanics; do not reduce Playkin to cosmetic versions of one adventure or to a generic card/quiz website.
+- For artwork, supply relevant portfolio evidence, usable layered/source files, appropriate formats and full provenance and commercially required rights. See [Creative Direction](docs/CREATIVE_DIRECTION.md).
+- Work only within your authorised scope. No freelancer or external reviewer has automatic access to private credentials, production accounts, repository write permissions or customer data.
 
-**Important:** Please review [REPOSITORY_STRUCTURE.md](REPOSITORY_STRUCTURE.md) to understand which repository to submit your contribution to:
+## GitHub workflow
 
-- **Submit to this repository (gameforge-mobile)** for: New features, bug fixes, UI/UX changes, service implementations, and mobile app code
-- **Submit to GameDevelopmentHub** for: Documentation updates, deployment guides, and general project information
+1. Open a narrowly scoped issue or discuss a proposal before significant changes.
+2. Work on an isolated branch based on current main.
+3. Submit a PR with a clear summary, observed tests, screenshots/recording if experience-related, and actual outstanding limitations.
+4. Respect protected main and required lint-and-test CI; do not force push or bypass review.
+5. Never deploy production, change secrets, configure live payments or enable AI providers without explicit authorisation.
+6. Keep new web TypeScript clean and legacy diagnostic debt tracked, without hiding new errors.
 
-## How to Contribute
+## Development and verification
 
-### Reporting Bugs
+Refer to the [README](README.md) for local Vite web/API commands. Preserve gift creation, recipient-link privacy, completion state, replay, deletion/retention and security checks.
 
-1. Check if the bug has already been reported in [Issues](https://github.com/ismaelloveexcel/gameforge-mobile/issues)
-2. Create a new issue with:
-   - Clear title and description
-   - Steps to reproduce
-   - Expected vs actual behavior
-   - Screenshots/videos if applicable
-   - Environment details (OS, device, versions)
+Run the checks relevant to your changes and distinguish local, CI and genuine browser evidence. For visually significant work, demonstrate it in the actual recipient flow on mobile and desktop; a standalone mockup is not acceptance.
 
-### Suggesting Features
+**Build passing does not mean magical, fun, marketable or launch-ready.** Representative user testing and creative approval are separate gates.
 
-1. Check existing feature requests
-2. Create a new issue with:
-   - Clear description of the feature
-   - Use cases and benefits
-   - Possible implementation approach
-   - Mockups or examples if applicable
+## Documentation and licensing
 
-### Pull Requests
+Do not silently erase or redefine old product ideas during cleanup. Use [Documentation Guide](docs/DOCUMENTATION_INDEX.md) to distinguish legacy research from current decisions, and update current docs when facts change.
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Make your changes
-4. Write/update tests
-5. Update documentation
-6. Commit with clear messages
-7. Push to your fork
-8. Open a pull request
+This is a public repository with a pre-existing MIT [LICENSE](LICENSE). Do not unilaterally change its licence, author credits, copyright attribution or rights to game art. Raise provenance and commercial ownership questions for owner review first.
 
-## Development Setup
-
-```bash
-# Clone your fork
-git clone https://github.com/YOUR_USERNAME/gameforge-mobile.git
-
-# Install dependencies
-npm install
-
-# Start development server
-npm start
-
-# Run tests
-npm test
-
-# Run linter
-npm run lint
-```
-
-## Code Style
-
-- Use TypeScript for all new code
-- Follow existing code patterns
-- Use meaningful variable names
-- Add comments for complex logic
-- Keep functions small and focused
-
-### TypeScript Guidelines
-
-```typescript
-// Use explicit types
-function calculateScore(points: number): number {
-  return points * 10;
-}
-
-// Use interfaces for objects
-interface Player {
-  id: string;
-  name: string;
-  score: number;
-}
-
-// Avoid any when possible
-// Use proper types or unknown
-```
-
-### Component Guidelines
-
-```typescript
-// Functional components with TypeScript
-import React from 'react';
-
-interface Props {
-  title: string;
-  onPress: () => void;
-}
-
-export default function MyComponent({ title, onPress }: Props) {
-  return (
-    // JSX
-  );
-}
-```
-
-## Testing
-
-- Write unit tests for utilities
-- Write integration tests for services
-- Test components with React Testing Library
-- Aim for >80% code coverage
-
-```typescript
-// Example test
-import { calculateScore } from './helpers';
-
-describe('calculateScore', () => {
-  it('multiplies points by 10', () => {
-    expect(calculateScore(5)).toBe(50);
-  });
-});
-```
-
-## Documentation
-
-- Update README if needed
-- Add JSDoc comments to functions
-- Update API documentation
-- Include examples in docs
-
-```typescript
-/**
- * Calculate player score with multiplier
- * @param points - Base points earned
- * @param multiplier - Score multiplier (default: 1)
- * @returns Final calculated score
- * @example
- * calculateScore(100, 2) // returns 200
- */
-export function calculateScore(points: number, multiplier = 1): number {
-  return points * multiplier;
-}
-```
-
-## Commit Messages
-
-Use conventional commits:
-
-```
-feat: add new VR template
-fix: resolve crash on iOS devices
-docs: update API documentation
-style: format code with prettier
-refactor: simplify engine initialization
-test: add tests for Genie service
-chore: update dependencies
-```
-
-## Areas to Contribute
-
-### High Priority
-- New game templates
-- Bug fixes
-- Performance optimizations
-- Documentation improvements
-
-### Medium Priority
-- New art styles
-- Additional Genie personalities
-- Marketing tools
-- Analytics features
-
-### Ideas Welcome
-- Community features
-- Multiplayer support
-- Advanced editors
-- Plugin system
-
-## Questions?
-
-- Open a discussion on GitHub
-- Join our Discord community
-- Email: dev@gameforge.mobile
-
-Thank you for contributing! 🎮✨
+Please report sensitive security concerns responsibly; do not publish live secrets or personal information in issues or pull requests.

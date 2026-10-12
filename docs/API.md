@@ -1,3 +1,5 @@
+> **LEGACY API REFERENCE — This documents older GameForge services and must not be treated as the current browser gift service API or as proof of working AI/engines.** See [Product Vision](../PRODUCT_INTENT.md), [Creative Direction](CREATIVE_DIRECTION.md) and [Documentation Guide](DOCUMENTATION_INDEX.md).
+
 # API Reference
 
 Complete API documentation for GameForge Mobile.

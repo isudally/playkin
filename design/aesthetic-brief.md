@@ -1,3 +1,5 @@
+> **HISTORICAL DESIGN INSPIRATION — This earlier GameForge aesthetic brief is reference material, not evidence that every animation, character state or visual style is currently implemented.** See [Product Vision](../PRODUCT_INTENT.md), [Creative Direction](../docs/CREATIVE_DIRECTION.md) and [Documentation Guide](../docs/DOCUMENTATION_INDEX.md).
+
 # 🎨 GameForge Mobile - Aesthetic Transformation Brief
 
 ## The Vision: "Forge Your Dreams"
