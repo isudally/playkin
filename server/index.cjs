@@ -59,7 +59,7 @@ function creatorToken(request) {
 function server() {
   return http.createServer(async (request, response) => {
     if (request.method === 'OPTIONS') {
-      response.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, Authorization', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS' });
+      response.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, Authorization', 'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS' });
       response.end();
       return;
     }
@@ -72,6 +72,11 @@ function server() {
       if (request.method === 'POST' && url.pathname === '/api/gifts') {
         const result = store.create(await body(request));
         return json(response, 201, result);
+      }
+      if (parts[0] === 'api' && parts[1] === 'gifts' && parts[2] && request.method === 'PATCH') {
+        const result = store.update(parts[2], creatorToken(request), await body(request));
+        if (!result) return json(response, 403, { error: 'Creator authorization failed.' });
+        return json(response, 200, result);
       }
       if (parts[0] === 'api' && parts[1] === 'gifts' && parts[2] && request.method === 'GET') {
         const gift = store.authorizeCreator(parts[2], creatorToken(request));

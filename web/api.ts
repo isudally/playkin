@@ -15,6 +15,7 @@ export interface GiftView extends GiftInput {
   status: 'draft' | 'published' | 'completed';
   progress: number;
   openedAt?: string | null;
+  interactedAt?: string | null;
   completion: { score: number; completedAt: string } | null;
 }
 
@@ -40,6 +41,10 @@ export function createGift(input: GiftInput): Promise<{ gift: GiftView; creatorT
 
 export function publishGift(id: string, creatorToken: string): Promise<PublishedGift> {
   return request(`/gifts/${encodeURIComponent(id)}/publish`, { method: 'POST', headers: { Authorization: `Bearer ${creatorToken}` } });
+}
+
+export function updateGift(id: string, creatorToken: string, input: GiftInput): Promise<{ gift: GiftView }> {
+  return request(`/gifts/${encodeURIComponent(id)}`, { method: 'PATCH', headers: { Authorization: `Bearer ${creatorToken}` }, body: JSON.stringify(input) });
 }
 
 export function getCreatorGift(id: string, creatorToken: string): Promise<{ gift: GiftView }> {
