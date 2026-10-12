@@ -52,3 +52,13 @@ Gift completion is first-write-wins: the first persisted score and timestamp are
 Gift records expire for delivery after seven days and remain eligible for creator recovery/deletion for a defined 30-day retention window. The local service purges records beyond that window during request processing. Corrupt JSON storage fails closed with a service error; it is never silently replaced with an empty database.
 
 The first Memory Trail is intentionally a small, three-round vertical slice. It proves the GameModule and persistence journey but is not represented as a finished premium catalogue experience. The sender message is withheld until completion; final Dodo artwork, richer game design, and broader catalogue work remain future scope.
+
+## Phase 1C product quality and reliability
+
+Phase 1C remains a targeted improvement to the first vertical slice, not a Phase 1B rewrite or a commercial launch claim. Creator management recovers through browser-tab `sessionStorage`, which supports refresh without putting a bearer creator token into durable browser storage. Cross-device creator recovery is deferred until a real identity/session boundary exists; silently choosing `localStorage` would broaden token exposure without solving identity, revocation, or device recovery.
+
+The server distinguishes passive recipient-link opening (`openedAt`) from recipient interaction (`interactedAt`), and completion remains first-write-wins. Republishing rotates the recipient token but preserves a completed gift's status. Creator updates preserve completion state. The recipient UI does not reveal the message until the completion write is confirmed by the server and offers a retry path on failure.
+
+The local JSON adapter now carries schema version 1, accepts the known unversioned migration shape, and fails closed on malformed records or unsupported versions. This is a migration seam for a later durable database; it is not production persistence. The first durable replacement should preserve ownership, retention, deletion, token hashing, and immutable completion invariants through integration tests before any hosted service is configured.
+
+The Memory Trail improvement adds explicit feedback and progression, score feedback, reveal gating, lightweight audio, and transition states. It remains temporary product-quality work with placeholder artwork and a small catalogue scope. Premium artwork, richer authored gameplay, identity, durable persistence, moderation, live AI, payments, uploads, and operational analytics remain launch dependencies.

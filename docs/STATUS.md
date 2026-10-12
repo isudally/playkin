@@ -2,18 +2,18 @@
 
 This is the authoritative delivery status for the repository. Feature lists in older documents describe product intent or historical work; they are not release-readiness evidence.
 
-Last verified: 2026-10-11 on `phase1b/first-complete-gift@bd507523f81380f1eaad674e67a17ea3f8d6e22d` for open [PR #4](https://github.com/isudally/playkin/pull/4), based on merged `main@fdd1c53b50d649e6d1d78783b24f0d2e2f1c3738`, with the active `Protect main - CI required` ruleset. Production deployment remains deferred.
+Last verified: 2026-10-12 on `phase1c/product-quality` based on merged `main@842965a586041a020108953fb8d59cecee191f0c`, with the active `Protect main - CI required` ruleset. Phase 1C verification is local until its pull request checks complete. Production deployment remains deferred.
 
 ## Current status
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Repository checkout | VERIFIED WORKING | Phase 0 PR #2 is merged into `main`; PR #1 is closed as superseded. |
+| Repository checkout | VERIFIED WORKING | Phase 0 PR #2, Phase 1A PR #3, and Phase 1B PR #4 are merged into `main`; PR #1 is closed as superseded. |
 | Dependency installation | VERIFIED WORKING | Plain `npm ci --no-audit --no-fund` completed with 1,730 packages and lifecycle scripts enabled. The local machine reported a Node 24 engine warning; GitHub CI used the pinned Node 18.18.0 toolchain. |
 | Typography blank-screen fix | VERIFIED WORKING | The isolated typography repair is included once through PR #2; PR #1 was closed without merging. |
 | Onboarding persistence | VERIFIED WORKING | Jest coverage and the GitHub Chromium smoke test cover first-run completion and returning-user bypass through the web storage adapter. |
 | Onboarding navigation | VERIFIED WORKING | The GitHub Chromium smoke test completes first-time onboarding into the Templates tab and then navigates the returning-user shell to Templates. |
-| Unit tests | VERIFIED WORKING | 10 suites and 90 tests pass locally after the targeted fixes. |
+| Unit tests | VERIFIED WORKING | Phase 1C adds regression coverage for versioned storage, corrupt records, republishing, creator updates, and immutable completion; exact current count is recorded below. |
 | Type checking | BROKEN / TRACKED DEBT | The legacy surface has known diagnostics; `verify:types` prevents the count from increasing. |
 | Lint | VERIFIED WORKING | ESLint exits successfully with 0 errors and 228 legacy warnings. |
 | Web export | VERIFIED WORKING | GitHub Actions CI completed `npm run build:web` in 41 seconds under the pinned Node 18.18.0 environment. |
@@ -22,10 +22,10 @@ Last verified: 2026-10-11 on `phase1b/first-complete-gift@bd507523f81380f1eaad67
 | Server-side AI replacement | PARTIAL | Phase 1B exposes a server-only `/api/ai/suggestions` boundary that is intentionally disabled until provider credentials and an approved product contract exist. No live AI claim is made. |
 | Client bundle secret scan | VERIFIED WORKING | GitHub Actions scanned the same fresh `web-build` produced by CI; the scanner passed. The deliberate provider-key fixture failed the scanner locally and was removed. |
 | Payment | NOT IMPLEMENTED | No payment provider or entitlement backend is in this Phase 0 scope. |
-| Server persistence / recipient links | VERIFIED WORKING | Phase 1B has a validated server-side JSON persistence boundary, hashed opaque expiring recipient tokens, creator authorization, deletion, open tracking, first-write-wins completion, retention purge, invalid-link handling, bounded rate limiting, and persisted completion state. The store is a first-slice local service, not a production database. |
+| Server persistence / recipient links | PARTIAL | Phase 1C adds a versioned/migratable JSON adapter, preserves completed status during republishing and creator updates, and distinguishes passive opens from interaction. It remains a replaceable local service, not a production database. |
 | Nightly agent publishing | DEFERRED | The current workflow remains a placeholder and retains no write authority in the Phase 0 target. |
 | Main branch governance | VERIFIED WORKING | Active ruleset `Protect main - CI required` targets `main`, requires pull requests and the `lint-and-test` GitHub Actions check, requires up-to-date branches, and blocks force pushes and deletion. |
-| Production deployment | VERIFIED SAFE / DEFERRED | Post-merge deploy workflow passed with the production step gated behind explicit manual dispatch authorization. No production deployment was authorized. Vercel account connectivity remains deferred. |
+| Production deployment | VERIFIED SAFE / DEFERRED | Post-merge deploy workflow passed with production and preview steps skipped because deployment credentials are unset and the workflow requires explicit authorization. No production deployment was authorized. Vercel account connectivity remains deferred. |
 
 ## Phase 1A status
 
@@ -55,6 +55,21 @@ Last verified: 2026-10-11 on `phase1b/first-complete-gift@bd507523f81380f1eaad67
 | Gameplay product accuracy | PARTIAL | The three-round Memory Trail is a substantive vertical-slice contract demonstration, not a commercially premium catalogue experience. The full sender message is now revealed only after completion; richer game design and final artwork remain follow-up work. |
 | Phase 1B browser evidence | VERIFIED WORKING | Chromium at 390x844 proved creator save, secure-link generation, separate browser delivery, all three game rounds, persisted completion after reload, creator status refresh showing opened/completed, creator deletion, deleted-link handling, and no unexpected browser errors. |
 | Phase 1B release state | READY TO MERGE | Targeted correction commit `bd507523f81380f1eaad674e67a17ea3f8d6e22d` is on PR #4; fresh GitHub CI and deployment-safety checks passed. This is not a production-readiness claim. |
+
+## Phase 1C current implementation
+
+| Area | Status | Evidence / boundary |
+| --- | --- | --- |
+| Branch | PARTIAL | `phase1c/product-quality`, based on merged `main@842965a`; PR is opened only after the local verification set is complete. |
+| Creator recovery | PARTIAL | The creator form and authorization token recover after refresh in the same browser tab through `sessionStorage`. Cross-device recovery is intentionally deferred until account identity exists; the token is not moved to persistent browser storage. |
+| Creator management | VERIFIED WORKING | Creator updates use an authenticated `PATCH` path; deletion remains available; status distinguishes passive link opens, interaction, and completion. |
+| Republish integrity | VERIFIED WORKING | Republishing rotates the recipient token without regressing a completed gift to `published`; creator updates preserve completion state. |
+| Completion messaging | VERIFIED WORKING | The recipient reveal remains closed until the server confirms the completion write; save failures expose a retry path. |
+| Open versus interaction | VERIFIED WORKING | Link resolution records `openedAt`; progress or completion records `interactedAt`; the creator status UI labels them separately. |
+| Storage evolution | PARTIAL | The JSON adapter now records schema version 1, accepts the unversioned migration shape, rejects unsupported or malformed records, and fails closed. A durable production database and migration runner remain deferred. |
+| Interactive experience | PARTIAL | Memory Trail now has answer feedback, explicit progression, score feedback, a completion reveal, lightweight audio, and motion states. It remains a development vertical slice with temporary artwork, not a commercial catalogue experience. |
+| Runtime evidence | VERIFIED WORKING | Local web types, server tests, production build, bundle guard, client-secret scan, and real Chromium at 390x844 passed. GitHub PR checks are required before merge. |
+| Release boundary | NOT READY TO MERGE | This branch must still pass its GitHub checks. No production deployment, payment, live AI, hosted database, identity, or Phase 1C merge is claimed. |
 
 ## Phase 0 acceptance gates
 
@@ -92,7 +107,7 @@ Last verified: 2026-10-11 on `phase1b/first-complete-gift@bd507523f81380f1eaad67
 - CI: [run `38157834134`](https://github.com/isudally/playkin/actions/runs/38157834134), required job `lint-and-test`, successful. It completed `npm ci`, legacy and independent web type checks, lint, 90 tests, Vite export, bundle guard, secret scan, Chromium installation, and the strengthened direct-route/persistence browser boot.
 - Deployment workflow: [run `38157834177`](https://github.com/isudally/playkin/actions/runs/38157834177), successful. Production and preview deployment steps were not authorized or configured; no deployment occurred.
 - Negative control: a temporary `react-native` reference in `web-build` caused `verify:web-bundle` to fail; the fixture was removed and the clean bundle guard passed again.
-- Status: MERGED and verified. Phase 1B is the active delivery branch; no production deployment has occurred.
+- Status: MERGED and verified. Phase 1B was merged into `main` at `842965a586041a020108953fb8d59cecee191f0c`; no production deployment has occurred.
 
 ## Phase 1B verification record
 
@@ -104,7 +119,7 @@ Last verified: 2026-10-11 on `phase1b/first-complete-gift@bd507523f81380f1eaad67
 - Negative control: a temporary `react-native` reference in `web-build` caused `verify:web-bundle` to fail; the fixture was removed and the clean scan passed again.
 - Runtime boundary: `npm run api:dev` serves the first-slice gift service on localhost; Vite proxies `/api` during local development. The production deployment workflow was not changed to deploy this service.
 - Remaining dependencies: production database, identity, moderation/audit policy, final Dodo/game artwork, hosted API runtime, live server-side AI, payments, uploads, and analytics.
-- PR: [#4](https://github.com/isudally/playkin/pull/4), base `main`, head `phase1b/first-complete-gift`, open and mergeable. Latest verified implementation commit: `39bfa31d450be65c94560200588de575224618c7`.
+- PR: [#4](https://github.com/isudally/playkin/pull/4), base `main`, head `phase1b/first-complete-gift`, merged. Verified pre-merge implementation commit: `b029859fb198bd481ee03f9e7daeed8dbc42b736`; merge commit: `842965a586041a020108953fb8d59cecee191f0c`.
 
 ## Phase 1B correctness correction record
 
@@ -119,3 +134,10 @@ Last verified: 2026-10-11 on `phase1b/first-complete-gift@bd507523f81380f1eaad67
 - GitHub verification after correction: CI run [`38161783569`](https://github.com/isudally/playkin/actions/runs/38161783569), job `114536043941`, passed in 1m45s; deployment-safety run [`38161783571`](https://github.com/isudally/playkin/actions/runs/38161783571), job `114536043970`, passed in 33s with no production deployment.
 - Negative control: a temporary `EXPO_PUBLIC_OPENAI_API_KEY` fixture caused the client-bundle scan to fail, then was removed. The clean scan passed again.
 - Product boundary: Memory Trail remains a small vertical slice rather than a commercially premium catalogue experience; the full message is revealed only after completion. Final artwork and richer game design remain deferred.
+
+## Phase 1B merge record
+
+- PR #4 was merged after the independent READY TO MERGE review. New `main` SHA: `842965a586041a020108953fb8d59cecee191f0c`.
+- Post-merge CI: [run `38207099971`](https://github.com/isudally/playkin/actions/runs/38207099971), required job `114672897582`, passed. It completed dependency installation, lint, Jest, server tests, type checks, web build, bundle scans, Chromium, and browser boot.
+- Post-merge deployment workflow: [run `38207099975`](https://github.com/isudally/playkin/actions/runs/38207099975), job `114672897185`, passed with production and preview deployment steps skipped. No unauthorized deployment occurred.
+- Phase 1C starts from this verified merge and does not alter production configuration.
