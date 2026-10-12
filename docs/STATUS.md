@@ -2,7 +2,7 @@
 
 This is the authoritative delivery status for the repository. Feature lists in older documents describe product intent or historical work; they are not release-readiness evidence.
 
-Last verified: 2026-10-12 on `phase1c/product-quality@aa6fcc6` for open [PR #5](https://github.com/isudally/playkin/pull/5), based on merged `main@842965a586041a020108953fb8d59cecee191f0c`, with the active `Protect main - CI required` ruleset. GitHub verification passed; production deployment remains deferred.
+Last verified: 2026-10-12 on open [PR #5](https://github.com/isudally/playkin/pull/5) from `phase1c/product-quality`, based on merged `main@842965a586041a020108953fb8d59cecee191f0c`, with the active `Protect main - CI required` ruleset. GitHub verification passed; production deployment remains deferred.
 
 ## Current status
 
@@ -145,7 +145,7 @@ Last verified: 2026-10-12 on `phase1c/product-quality@aa6fcc6` for open [PR #5](
 ## Phase 1C verification record
 
 - Branch: `phase1c/product-quality`, based on merged `main@842965a586041a020108953fb8d59cecee191f0c`.
-- PR: [#5](https://github.com/isudally/playkin/pull/5), open and mergeable. Current head: `aa6fcc6`.
+- PR: [#5](https://github.com/isudally/playkin/pull/5), open and mergeable. The exact current head is kept in the linked pull request and final report; the checks below are for the latest pushed revision.
 - GitHub CI: [run `38208622522`](https://github.com/isudally/playkin/actions/runs/38208622522), job `114677583331`, passed in 2m17s. It completed `npm ci`, ESLint, 90 Jest tests, 7 server tests, tracked legacy TypeScript verification, independent web TypeScript verification, Vite build, bundle guard, client-secret scan, Chromium installation, and browser boot.
 - Deployment safety: [run `38208622489`](https://github.com/isudally/playkin/actions/runs/38208622489), job `114677582977`, passed in 49s. Production and preview deployment steps were skipped; no deployment occurred.
 - Local runtime evidence: real Chromium at 390x844 passed creator refresh recovery, separate-browser delivery, three-round play, interaction/completion status, server-confirmed reveal, completion reload, creator deletion, invalid-link handling, admin navigation, and no unexpected page or console errors.
