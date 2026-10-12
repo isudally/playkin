@@ -2,7 +2,7 @@
 
 This is the authoritative delivery status for the repository. Feature lists in older documents describe product intent or historical work; they are not release-readiness evidence.
 
-Last verified: 2026-10-12 on open [PR #5](https://github.com/isudally/playkin/pull/5) from `phase1c/product-quality`, based on merged `main@842965a586041a020108953fb8d59cecee191f0c`, with the active `Protect main - CI required` ruleset. GitHub verification passed; production deployment remains deferred.
+Last verified: 2026-10-12 on `phase1d/flagship-experience`, based on merged `main@399d402a397befca0f53938331380ccc3cc9c5a3`, with the active `Protect main - CI required` ruleset. Local Phase 1D verification passed; the review pull request is not yet merged and production deployment remains deferred.
 
 ## Current status
 
@@ -60,7 +60,7 @@ Last verified: 2026-10-12 on open [PR #5](https://github.com/isudally/playkin/pu
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Branch | PARTIAL | `phase1c/product-quality`, based on merged `main@842965a`; [PR #5](https://github.com/isudally/playkin/pull/5) is open with local verification complete and GitHub checks pending. |
+| Branch | VERIFIED WORKING | `phase1c/product-quality` was merged into `main` at `399d402a397befca0f53938331380ccc3cc9c5a3`; Phase 1D starts from that verified baseline. |
 | Creator recovery | PARTIAL | The creator form and authorization token recover after refresh in the same browser tab through `sessionStorage`. Cross-device recovery is intentionally deferred until account identity exists; the token is not moved to persistent browser storage. |
 | Creator management | VERIFIED WORKING | Creator updates use an authenticated `PATCH` path; deletion remains available; status distinguishes passive link opens, interaction, and completion. |
 | Republish integrity | VERIFIED WORKING | Republishing rotates the recipient token without regressing a completed gift to `published`; creator updates preserve completion state. |
@@ -151,4 +151,19 @@ Last verified: 2026-10-12 on open [PR #5](https://github.com/isudally/playkin/pu
 - Local runtime evidence: real Chromium at 390x844 passed creator refresh recovery, separate-browser delivery, three-round play, interaction/completion status, server-confirmed reveal, completion reload, creator deletion, invalid-link handling, admin navigation, and no unexpected page or console errors.
 - Local product checks: 10 Jest suites / 90 tests, 7 server tests, web type check with zero diagnostics, legacy baseline at exactly 63 diagnostics, lint with 0 errors / 228 warnings, 164,883 raw JavaScript bytes, bundle guard, and client secret scan all passed.
 - Negative controls: a reduced legacy type baseline and a provider-key fixture each caused their relevant check to fail; both were removed and clean checks passed again.
-- Status: READY TO MERGE as a development milestone. This is not a commercial launch or production-readiness claim.
+- Status: MERGED and verified as a development milestone. This is not a commercial launch or production-readiness claim.
+
+## Phase 1D flagship experience
+
+| Area | Status | Evidence / boundary |
+| --- | --- | --- |
+| Branch | PARTIAL | `phase1d/flagship-experience`, based on `main@399d402a397befca0f53938331380ccc3cc9c5a3`; local implementation is complete and the review PR is pending. |
+| Flagship concept | VERIFIED WORKING | Dodo's Lantern Trail is a five-chapter night adventure. The recipient wakes a lantern, follows five connected acts of attention, collects sparks, receives answer feedback, and unlocks the sender's message only after server-confirmed completion. |
+| Personalisation | VERIFIED WORKING | Recipient and sender names, occasion, theme, and sender message shape the chapter copy, answer choices, visual identity, and final reveal. The current questionnaire remains intentionally small; interests and age brackets are deferred. |
+| Visual delivery | PARTIAL | The independent Vite runtime now uses an original Dodo-with-lantern illustration, composed lantern scenes, star progression, responsive states, purposeful transitions, reduced-motion CSS, and an explicit sound toggle. Final brand art direction, asset review, and a broader art pack remain commercial dependencies. |
+| Asset provenance | VERIFIED DOCUMENTED | `web/public/dodo-lantern-companion.png` is an original development illustration generated for this branch; it is not a third-party or franchise asset. Commercial licensing and brand approval are still required before launch. |
+| Replayability | VERIFIED WORKING | Completed gifts remain completed after reload and can be revisited without destroying the persisted completion state. The current content path is deterministic; branching content is deferred. |
+| Local verification | VERIFIED WORKING | 11 Jest suites / 93 tests, 7 server tests, web type check with zero diagnostics, legacy baseline exactly 63 diagnostics, lint 0 errors / 228 warnings, Vite export 168,186 raw JavaScript bytes, web bundle guard, client secret scan, and real Chromium journey passed. |
+| Browser evidence | VERIFIED WORKING | `docs/evidence/phase1d/` contains opening desktop reduced-motion, opening/interaction/progression/reveal/replay mobile screenshots. The browser journey proved secure delivery, protected pre-completion message, five chapters, mute toggle, completion persistence, deletion, and invalid-link handling without unexpected browser errors. |
+| Commercial assessment | PARTIAL | This is a materially more authored and visual development milestone, not a sellable production gift yet. Stronger content variation, final art/audio review, durable production persistence, identity, moderation, and production hosting remain launch blockers. |
+| Release state | READY FOR REVIEW | Do not merge or deploy until the branch is pushed, GitHub CI independently passes, and the visual evidence is reviewed in the pull request. |
