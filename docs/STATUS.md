@@ -2,7 +2,7 @@
 
 This is the authoritative delivery status for the repository. Feature lists in older documents describe product intent or historical work; they are not release-readiness evidence.
 
-Last verified: 2026-10-12 on `phase1c/product-quality@95e0e4252bda4cf6a049c7d78f4f3adc5f32fc33` for open [PR #5](https://github.com/isudally/playkin/pull/5), based on merged `main@842965a586041a020108953fb8d59cecee191f0c`, with the active `Protect main - CI required` ruleset. GitHub verification passed; production deployment remains deferred.
+Last verified: 2026-10-12 on `phase1c/product-quality@aa6fcc6` for open [PR #5](https://github.com/isudally/playkin/pull/5), based on merged `main@842965a586041a020108953fb8d59cecee191f0c`, with the active `Protect main - CI required` ruleset. GitHub verification passed; production deployment remains deferred.
 
 ## Current status
 
@@ -145,9 +145,9 @@ Last verified: 2026-10-12 on `phase1c/product-quality@95e0e4252bda4cf6a049c7d78f
 ## Phase 1C verification record
 
 - Branch: `phase1c/product-quality`, based on merged `main@842965a586041a020108953fb8d59cecee191f0c`.
-- PR: [#5](https://github.com/isudally/playkin/pull/5), open and mergeable. Verified implementation head before this status-only record: `95e0e4252bda4cf6a049c7d78f4f3adc5f32fc33`.
-- GitHub CI: [run `38208468349`](https://github.com/isudally/playkin/actions/runs/38208468349), job `114677106449`, passed in 1m28s. It completed `npm ci`, ESLint, 90 Jest tests, 7 server tests, tracked legacy TypeScript verification, independent web TypeScript verification, Vite build, bundle guard, client-secret scan, Chromium installation, and browser boot.
-- Deployment safety: [run `38208468371`](https://github.com/isudally/playkin/actions/runs/38208468371), job `114677106386`, passed in 48s. Production and preview deployment steps were skipped; no deployment occurred.
+- PR: [#5](https://github.com/isudally/playkin/pull/5), open and mergeable. Current head: `aa6fcc6`.
+- GitHub CI: [run `38208622522`](https://github.com/isudally/playkin/actions/runs/38208622522), job `114677583331`, passed in 2m17s. It completed `npm ci`, ESLint, 90 Jest tests, 7 server tests, tracked legacy TypeScript verification, independent web TypeScript verification, Vite build, bundle guard, client-secret scan, Chromium installation, and browser boot.
+- Deployment safety: [run `38208622489`](https://github.com/isudally/playkin/actions/runs/38208622489), job `114677582977`, passed in 49s. Production and preview deployment steps were skipped; no deployment occurred.
 - Local runtime evidence: real Chromium at 390x844 passed creator refresh recovery, separate-browser delivery, three-round play, interaction/completion status, server-confirmed reveal, completion reload, creator deletion, invalid-link handling, admin navigation, and no unexpected page or console errors.
 - Local product checks: 10 Jest suites / 90 tests, 7 server tests, web type check with zero diagnostics, legacy baseline at exactly 63 diagnostics, lint with 0 errors / 228 warnings, 164,883 raw JavaScript bytes, bundle guard, and client secret scan all passed.
 - Negative controls: a reduced legacy type baseline and a provider-key fixture each caused their relevant check to fail; both were removed and clean checks passed again.
