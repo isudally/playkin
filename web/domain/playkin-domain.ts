@@ -11,6 +11,20 @@ export interface GiftDraft {
   readonly createdAt: string;
 }
 
+export type GiftStatus = 'draft' | 'published' | 'completed';
+
+export interface GiftCompletion {
+  readonly score: number;
+  readonly completedAt: string;
+}
+
+export interface GiftRecord extends GiftDraft {
+  readonly status: GiftStatus;
+  readonly progress: number;
+  readonly expiresAt: string;
+  readonly completion: GiftCompletion | null;
+}
+
 export interface GiftPersistence {
   saveDraft(draft: GiftDraft): Promise<void>;
   getDraft(id: string): Promise<GiftDraft | null>;
@@ -39,9 +53,9 @@ export interface AnalyticsTracker {
 }
 
 export const integrationStatus = {
-  giftPersistence: 'reserved for Phase 1B server implementation',
-  recipientLinks: 'reserved for Phase 1B opaque expiring tokens',
-  serverAi: 'reserved for server-only provider credentials',
+  giftPersistence: 'Phase 1B local server store with validation and deletion boundary',
+  recipientLinks: 'Phase 1B hashed opaque expiring tokens',
+  serverAi: 'Phase 1B server-only boundary, provider not configured',
   payments: 'reserved for commercial entitlement work',
   uploads: 'reserved for media storage boundary',
   analytics: 'reserved for host-controlled event tracking',

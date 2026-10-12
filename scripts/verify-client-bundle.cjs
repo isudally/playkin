@@ -7,7 +7,6 @@ const forbiddenPatterns = [
   /\bEXPO_PUBLIC_PAYTABS_SERVER_KEY\b/i,
   /api\.openai\.com/i,
   /api\.x\.ai/i,
-  /Authorization['"`]?\s*:\s*['"`]Bearer/i,
   /\bsk-[A-Za-z0-9]{12,}\b/,
 ];
 

@@ -35,6 +35,9 @@ jobs:
       - name: Run Tests
         run: npm test
 
+      - name: Run gift service tests
+        run: npm run test:server
+
       - name: Check TypeScript
         run: npm run verify:types
 

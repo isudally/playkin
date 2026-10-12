@@ -27,6 +27,8 @@
     "deploy:firebase": "npm run build:web && firebase deploy",
     "verify:client-bundle": "node scripts/verify-client-bundle.cjs web-build",
     "verify:browser": "node scripts/verify-web-boot.cjs",
+    "api:dev": "node server/index.cjs",
+    "test:server": "node --test server/store.test.cjs server/rate-limit.test.cjs server/http.test.cjs",
     "eas:build:android": "eas build --platform android --profile production",
     "eas:build:ios": "eas build --platform ios --profile production",
     "eas:preview": "eas build --platform android --profile preview"

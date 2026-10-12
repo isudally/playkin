@@ -31,6 +31,7 @@ export interface GameModuleInput {
   readonly recipientName: string;
   readonly senderName: string;
   readonly message?: string;
+  readonly occasion: string;
   readonly themeId: string;
   readonly difficulty: string;
 }

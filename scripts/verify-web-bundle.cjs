@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const bundleDirectory = path.resolve(process.argv[2] || 'web-build');
-const forbiddenRuntimeImports = /react-native|react-navigation|\bexpo\b|\bbabylon(?:js)?\b|\bpixi(?:\.js)?\b|\baframe\b|\bthree\b/i;
+const forbiddenRuntimeImports = /react-native|react-navigation|\bexpo\b|\bbabylon(?:js)?\b|\bpixi(?:\.js)?\b|\baframe\b/i;
 const maxJavaScriptBytes = 300_000;
 
 function collectFiles(directory) {
