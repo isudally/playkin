@@ -2,7 +2,7 @@
 
 This is the authoritative delivery status for the repository. Feature lists in older documents describe product intent or historical work; they are not release-readiness evidence.
 
-Last verified: 2026-10-12 on `phase1d/flagship-experience`, based on merged `main@399d402a397befca0f53938331380ccc3cc9c5a3`, with the active `Protect main - CI required` ruleset. Local Phase 1D verification passed; the review pull request is not yet merged and production deployment remains deferred.
+Last verified: 2026-10-12 on [PR #6](https://github.com/isudally/playkin/pull/6), head `656c9487b9d9049e8ba503212467107346bbdbc5`, based on merged `main@399d402a397befca0f53938331380ccc3cc9c5a3`, with the active `Protect main - CI required` ruleset. Local and GitHub Phase 1D verification passed; the PR remains open and production deployment remains deferred.
 
 ## Current status
 
@@ -157,13 +157,15 @@ Last verified: 2026-10-12 on `phase1d/flagship-experience`, based on merged `mai
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Branch | PARTIAL | `phase1d/flagship-experience`, based on `main@399d402a397befca0f53938331380ccc3cc9c5a3`; local implementation is complete and the review PR is pending. |
+| Branch | VERIFIED WORKING | `phase1d/flagship-experience`, based on `main@399d402a397befca0f53938331380ccc3cc9c5a3`; [PR #6](https://github.com/isudally/playkin/pull/6) is open at `656c9487b9d9049e8ba503212467107346bbdbc5`. |
 | Flagship concept | VERIFIED WORKING | Dodo's Lantern Trail is a five-chapter night adventure. The recipient wakes a lantern, follows five connected acts of attention, collects sparks, receives answer feedback, and unlocks the sender's message only after server-confirmed completion. |
 | Personalisation | VERIFIED WORKING | Recipient and sender names, occasion, theme, and sender message shape the chapter copy, answer choices, visual identity, and final reveal. The current questionnaire remains intentionally small; interests and age brackets are deferred. |
 | Visual delivery | PARTIAL | The independent Vite runtime now uses an original Dodo-with-lantern illustration, composed lantern scenes, star progression, responsive states, purposeful transitions, reduced-motion CSS, and an explicit sound toggle. Final brand art direction, asset review, and a broader art pack remain commercial dependencies. |
 | Asset provenance | VERIFIED DOCUMENTED | `web/public/dodo-lantern-companion.png` is an original development illustration generated for this branch; it is not a third-party or franchise asset. Commercial licensing and brand approval are still required before launch. |
 | Replayability | VERIFIED WORKING | Completed gifts remain completed after reload and can be revisited without destroying the persisted completion state. The current content path is deterministic; branching content is deferred. |
-| Local verification | VERIFIED WORKING | 11 Jest suites / 93 tests, 7 server tests, web type check with zero diagnostics, legacy baseline exactly 63 diagnostics, lint 0 errors / 228 warnings, Vite export 168,186 raw JavaScript bytes, web bundle guard, client secret scan, and real Chromium journey passed. |
+| Local verification | VERIFIED WORKING | Clean `npm ci` passed with the committed lockfile; 11 Jest suites / 93 tests, 7 server tests, web type check with zero diagnostics, legacy baseline exactly 63 diagnostics, lint 0 errors / 228 warnings, Vite export 168,055 raw JavaScript bytes, web bundle guard, client secret scan, and real Chromium journey passed. |
 | Browser evidence | VERIFIED WORKING | `docs/evidence/phase1d/` contains opening desktop reduced-motion, opening/interaction/progression/reveal/replay mobile screenshots. The browser journey proved secure delivery, protected pre-completion message, five chapters, mute toggle, completion persistence, deletion, and invalid-link handling without unexpected browser errors. |
 | Commercial assessment | PARTIAL | This is a materially more authored and visual development milestone, not a sellable production gift yet. Stronger content variation, final art/audio review, durable production persistence, identity, moderation, and production hosting remain launch blockers. |
-| Release state | READY FOR REVIEW | Do not merge or deploy until the branch is pushed, GitHub CI independently passes, and the visual evidence is reviewed in the pull request. |
+| GitHub CI | VERIFIED WORKING | [Run 38215332944](https://github.com/isudally/playkin/actions/runs/38215332944) passed for head `656c9487b9d9049e8ba503212467107346bbdbc5`, including dependency install, tests, server tests, type checks, lint, web build, bundle scans, Chromium installation, and browser boot. |
+| Deployment safety | VERIFIED SAFE / DEFERRED | [Run 38215333041](https://github.com/isudally/playkin/actions/runs/38215333041) passed; both Vercel production and preview steps were skipped. No deployment occurred. |
+| Release state | READY TO MERGE | PR #6 is open and mergeable with local and GitHub checks green. This is a development milestone, not a commercial launch or production-readiness claim. |
