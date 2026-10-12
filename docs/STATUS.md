@@ -2,26 +2,36 @@
 
 This is the authoritative delivery status for the repository. Feature lists in older documents describe product intent or historical work; they are not release-readiness evidence.
 
-Last verified: 2026-10-12 on [PR #6](https://github.com/isudally/playkin/pull/6), head `b7523be83f1eb626001a861a47d61bea3ad7ee70`, based on merged `main@399d402a397befca0f53938331380ccc3cc9c5a3`, with the active `Protect main - CI required` ruleset. Local and GitHub corrective verification passed; the PR remains open and production deployment remains deferred.
+Last verified: 2026-10-12 on merged `main@cdd405b2acf4b7bc2642c03e58f9f365deb1d660`. [PR #6](https://github.com/isudally/playkin/pull/6) is MERGED; post-merge [CI 38227016420](https://github.com/isudally/playkin/actions/runs/38227016420) and [deployment-safety workflow 38227016435](https://github.com/isudally/playkin/actions/runs/38227016435) both passed. Production and preview deploy steps were skipped. Main branch protection remains active.
 
-## Current status
+## Authoritative current snapshot — Phase 1D merged
+
+**Product vision:** Playkin is a **multi-game personalised gifting platform**. Dodo's Lantern Trail is Game #1 and a development reference, not the entire product. See [Product Vision](../PRODUCT_INTENT.md) and [Creative Direction](CREATIVE_DIRECTION.md).
+
+**Current technical baseline:** Verified browser-native Vite application, local gift service, encrypted-by-hash opaque gift tokens, sender/recipient journey, five direct interaction mechanics, replay, first-write-wins completion, deletion/expiry safeguards, and CI/browser evidence. The current backend uses a versioned **local JSON file**, not hosted durable production persistence.
+
+**Not yet commercial-ready:** multiple purchasable game offerings, deeper age/interest personalization and varied content, final high-quality production art/audio, payments, durable hosted data, real customer identity, moderation/consent safeguards, operational analytics, tamper-resistant gameplay and production hosting. A successful CI run is not evidence of buyer willingness to pay or finished creative quality.
+
+**Documentation precedence:** [Documentation Guide](DOCUMENTATION_INDEX.md). The chronological records below include statements made **before** earlier PRs were merged; they are retained as historical evidence, not current instructions or authorisation to implement legacy GameForge plans.
+
+## Current verified implementation status
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Repository checkout | VERIFIED WORKING | Phase 0 PR #2, Phase 1A PR #3, and Phase 1B PR #4 are merged into `main`; PR #1 is closed as superseded. |
+| Repository checkout | VERIFIED WORKING | Phase 0 PR #2, Phase 1A PR #3, Phase 1B PR #4, Phase 1C PR #5 and Phase 1D PR #6 have merged into `main`; PR #1 was closed as superseded. |
 | Dependency installation | VERIFIED WORKING | Plain `npm ci --no-audit --no-fund` completed with 1,730 packages and lifecycle scripts enabled. The local machine reported a Node 24 engine warning; GitHub CI used the pinned Node 18.18.0 toolchain. |
 | Typography blank-screen fix | VERIFIED WORKING | The isolated typography repair is included once through PR #2; PR #1 was closed without merging. |
 | Onboarding persistence | VERIFIED WORKING | Jest coverage and the GitHub Chromium smoke test cover first-run completion and returning-user bypass through the web storage adapter. |
 | Onboarding navigation | VERIFIED WORKING | The GitHub Chromium smoke test completes first-time onboarding into the Templates tab and then navigates the returning-user shell to Templates. |
-| Unit tests | VERIFIED WORKING | Phase 1C adds regression coverage for versioned storage, corrupt records, republishing, creator updates, and immutable completion; exact current count is recorded below. |
+| Unit tests | VERIFIED WORKING | Latest Phase 1D verification passed 93 Jest tests and 7 server tests; see post-merge CI run 38227016420. |
 | Type checking | BROKEN / TRACKED DEBT | The legacy surface has known diagnostics; `verify:types` prevents the count from increasing. |
 | Lint | VERIFIED WORKING | ESLint exits successfully with 0 errors and 228 legacy warnings. |
-| Web export | VERIFIED WORKING | GitHub Actions CI completed `npm run build:web` in 41 seconds under the pinned Node 18.18.0 environment. |
+| Web export | VERIFIED WORKING | The independent Vite web build passed in post-merge CI run 38227016420 on Node 18.18.0. |
 | Browser boot | VERIFIED WORKING | GitHub Actions CI installed Chromium and completed the fresh-export browser smoke test, including first-time onboarding, returning-user bypass, and nested Templates navigation. |
 | Client AI credentials | RETIRED | The client no longer reads provider keys, embeds provider endpoints, or calls provider APIs; generation uses the existing local fallback until Phase 1 server work. |
 | Server-side AI replacement | PARTIAL | Phase 1B exposes a server-only `/api/ai/suggestions` boundary that is intentionally disabled until provider credentials and an approved product contract exist. No live AI claim is made. |
 | Client bundle secret scan | VERIFIED WORKING | GitHub Actions scanned the same fresh `web-build` produced by CI; the scanner passed. The deliberate provider-key fixture failed the scanner locally and was removed. |
-| Payment | NOT IMPLEMENTED | No payment provider or entitlement backend is in this Phase 0 scope. |
+| Payment | NOT IMPLEMENTED | The current web app has no live checkout, paid entitlements or billing integration. |
 | Server persistence / recipient links | PARTIAL | Phase 1C adds a versioned/migratable JSON adapter, preserves completed status during republishing and creator updates, and distinguishes passive opens from interaction. It remains a replaceable local service, not a production database. |
 | Nightly agent publishing | DEFERRED | The current workflow remains a placeholder and retains no write authority in the Phase 0 target. |
 | Main branch governance | VERIFIED WORKING | Active ruleset `Protect main - CI required` targets `main`, requires pull requests and the `lint-and-test` GitHub Actions check, requires up-to-date branches, and blocks force pushes and deletion. |
@@ -54,7 +64,7 @@ Last verified: 2026-10-12 on [PR #6](https://github.com/isudally/playkin/pull/6)
 | Privacy and abuse boundaries | PARTIAL | Creator-token authorization, recipient-token isolation, deletion, input limits, bounded body parsing, expiry, retention, and socket-based bounded rate limiting are present. Identity, moderation, audit retention, and production database controls remain follow-up work. |
 | Gameplay product accuracy | PARTIAL | The three-round Memory Trail is a substantive vertical-slice contract demonstration, not a commercially premium catalogue experience. The full sender message is now revealed only after completion; richer game design and final artwork remain follow-up work. |
 | Phase 1B browser evidence | VERIFIED WORKING | Chromium at 390x844 proved creator save, secure-link generation, separate browser delivery, all three game rounds, persisted completion after reload, creator status refresh showing opened/completed, creator deletion, deleted-link handling, and no unexpected browser errors. |
-| Phase 1B release state | READY TO MERGE | Targeted correction commit `bd507523f81380f1eaad674e67a17ea3f8d6e22d` is on PR #4; fresh GitHub CI and deployment-safety checks passed. This is not a production-readiness claim. |
+| Phase 1B release state | MERGED — DEVELOPMENT | PR #4 was merged into main at 842965a. Technical milestone only; no commercial launch. |
 
 ## Phase 1C current implementation
 
@@ -69,7 +79,7 @@ Last verified: 2026-10-12 on [PR #6](https://github.com/isudally/playkin/pull/6)
 | Storage evolution | PARTIAL | The JSON adapter now records schema version 1, accepts the unversioned migration shape, rejects unsupported or malformed records, and fails closed. A durable production database and migration runner remain deferred. |
 | Interactive experience | PARTIAL | Memory Trail now has answer feedback, explicit progression, score feedback, a completion reveal, lightweight audio, and motion states. It remains a development vertical slice with temporary artwork, not a commercial catalogue experience. |
 | Runtime evidence | VERIFIED WORKING | Local web types, server tests, production build, bundle guard, client-secret scan, and real Chromium at 390x844 passed. GitHub PR checks are required before merge. |
-| Release boundary | READY TO MERGE | PR #5 is open and mergeable; local and GitHub verification passed. No production deployment, payment, live AI, hosted database, identity, or Phase 1C merge is claimed. |
+| Release boundary | MERGED — DEVELOPMENT | PR #5 was merged at 399d402. Phase 1C work was a verified development milestone, not a commercial launch. |
 
 ## Phase 0 acceptance gates
 
@@ -145,7 +155,7 @@ Last verified: 2026-10-12 on [PR #6](https://github.com/isudally/playkin/pull/6)
 ## Phase 1C verification record
 
 - Branch: `phase1c/product-quality`, based on merged `main@842965a586041a020108953fb8d59cecee191f0c`.
-- PR: [#5](https://github.com/isudally/playkin/pull/5), open and mergeable. The exact current head is kept in the linked pull request and final report; the checks below are for the latest pushed revision.
+- PR: [#5](https://github.com/isudally/playkin/pull/5), reviewed while open and subsequently merged into main at 399d402. The checks below are historical Phase 1C verification evidence.
 - GitHub CI: [run `38208622522`](https://github.com/isudally/playkin/actions/runs/38208622522), job `114677583331`, passed in 2m17s. It completed `npm ci`, ESLint, 90 Jest tests, 7 server tests, tracked legacy TypeScript verification, independent web TypeScript verification, Vite build, bundle guard, client-secret scan, Chromium installation, and browser boot.
 - Deployment safety: [run `38208622489`](https://github.com/isudally/playkin/actions/runs/38208622489), job `114677582977`, passed in 49s. Production and preview deployment steps were skipped; no deployment occurred.
 - Local runtime evidence: real Chromium at 390x844 passed creator refresh recovery, separate-browser delivery, three-round play, interaction/completion status, server-confirmed reveal, completion reload, creator deletion, invalid-link handling, admin navigation, and no unexpected page or console errors.
@@ -157,7 +167,7 @@ Last verified: 2026-10-12 on [PR #6](https://github.com/isudally/playkin/pull/6)
 
 | Area | Status | Evidence / boundary |
 | --- | --- | --- |
-| Branch | VERIFIED WORKING | `phase1d/flagship-experience`, based on `main@399d402a397befca0f53938331380ccc3cc9c5a3`; [PR #6](https://github.com/isudally/playkin/pull/6) is open at `b7523be83f1eb626001a861a47d61bea3ad7ee70`. |
+| Branch | MERGED — DEVELOPMENT | `phase1d/flagship-experience` was reviewed at 998c5fe and merged through [PR #6](https://github.com/isudally/playkin/pull/6) into main at cdd405b. |
 | Recipient shell | VERIFIED WORKING | Recipient links open an immersive route without ordinary Playkin navigation or Admin controls. The invalid-link state remains explicitly handled. |
 | Flagship mechanics | VERIFIED WORKING | Dodo's Lantern Trail now uses five distinct scene-led mechanics: discover hidden sparks, aim the lantern beam, trace a path in order, collect keepsakes, and assemble the final star. At least three stages require direct scene interaction rather than text answers. |
 | Meaningful progression | VERIFIED WORKING | Each completed stage increases sparks and lantern power; the scene changes through brighter sky, path, stars, hills, and final lantern treatment. The module remains host-controlled and DOM/React-based. |
@@ -170,4 +180,4 @@ Last verified: 2026-10-12 on [PR #6](https://github.com/isudally/playkin/pull/6)
 | Commercial assessment | PARTIAL | This is a stronger authored development milestone, not a sellable production gift yet. Final art/audio review, richer content variation, durable production persistence, identity, moderation, tamper-resistant gameplay, and production hosting remain launch blockers. |
 | GitHub CI | VERIFIED WORKING | [Run 38224450681](https://github.com/isudally/playkin/actions/runs/38224450681) passed on `b7523be`, including install, lint, 93 Jest tests, 7 server tests, both TypeScript checks, build, bundle guard, client scan, Chromium installation, and browser boot. |
 | Deployment safety | VERIFIED SAFE / DEFERRED | [Run 38224450679](https://github.com/isudally/playkin/actions/runs/38224450679) passed; production and preview deployment steps were skipped. No deployment occurred. |
-| Release state | READY TO MERGE | PR #6 is open and mergeable with local evidence and fresh GitHub CI green. This is a development milestone, not a commercial launch or production-readiness claim. |
+| Release state | MERGED — NOT LAUNCH READY | PR #6 merged as cdd405b; post-merge CI 38227016420 passed, the deployment workflow 38227016435 passed with production and preview skipped. Commercial launch requires additional work and approval. |
